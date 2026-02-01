@@ -1,0 +1,12 @@
+.react-flow__attribution{
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none; 
+}
+
+main{
+    background-color: #020617;
+}
