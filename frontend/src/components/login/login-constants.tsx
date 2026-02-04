@@ -1,2 +1,2 @@
-export const DDE: string = "DDE";
-export const HEADER: string = "Welcome to DDE.";
+export const DDE: string = "GuidDx";
+export const HEADER: string = "Welcome to GuideDx.";

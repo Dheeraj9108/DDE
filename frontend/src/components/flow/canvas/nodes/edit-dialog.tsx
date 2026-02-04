@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,8 +14,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRef } from "react";
 import * as CONST from "../../constants";
 import { EvidencePopover } from "./evidence-dialog";
+import { IconMessageCircleFilled } from "@tabler/icons-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { BulletInput } from "./bullet-input";
 
-export function EditDialog({ mode, icon, data, editContent }: any) {
+export function EditDialog({ open, onClose, mode, data, editContent }: any) {
   const labelRef = useRef(data?.label);
   const contentRef = useRef(data?.prompt);
 
@@ -39,14 +41,8 @@ export function EditDialog({ mode, icon, data, editContent }: any) {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onClose}>
       <form>
-        <DialogTrigger
-          asChild
-          className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-sm"
-        >
-          <Button variant="outline">{icon}</Button>
-        </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{CONST.EDIT_NODE}</DialogTitle>
@@ -96,6 +92,19 @@ export function EditDialog({ mode, icon, data, editContent }: any) {
                   />
                 </div>
               </div>
+            </div>
+            <div className="flex">
+              <Label className="pr-2">Comment</Label>
+              <Popover >
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" title="Add Evidence">
+                    <IconMessageCircleFilled size={20} />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent side="top">
+                  <BulletInput list={[]} onInput={()=>{}} />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
           <DialogFooter>

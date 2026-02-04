@@ -32,7 +32,7 @@ export function InfiniteScroll({
 
   return (
     <>
-      <div className="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="py-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {flowList.map((flow: any, idx: number) => (
           <div className="flow">
             <Flow flow={flow} key={idx} />

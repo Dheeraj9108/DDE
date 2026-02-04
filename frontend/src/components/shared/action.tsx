@@ -8,14 +8,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { MoreHorizontal } from "lucide-react";
-import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
-export const Action = ({
-  handleNavigate,
-  handleDelete,
-}: {
-  handleNavigate: () => void;
-  handleDelete: () => void;
-}) => {
+import { IAction } from "./interfaces/interfaces";
+
+export const Action = (actionProp: IAction) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -26,20 +21,18 @@ export const Action = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
-          <span></span>Actions
+          <span></span>{actionProp.label ?? 'Actions'}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <IconEdit /> Edit
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleNavigate()}>
-          <IconEye />
-          View
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleDelete()}>
-          <IconTrash />
-          Delete
-        </DropdownMenuItem>
+        {
+          actionProp?.actions?.map(action => {
+            return (
+              <DropdownMenuItem onClick={() => action.onClick(actionProp.row)}>
+                {action.icon}{action.label}
+              </DropdownMenuItem>
+            )
+          })
+        }
       </DropdownMenuContent>
     </DropdownMenu>
   );

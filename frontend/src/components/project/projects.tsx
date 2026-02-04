@@ -1,20 +1,23 @@
 import { Header } from "../shared/header";
 import { DataTable } from "../shared/data-table/data-table";
-import { columns } from "./columns";
 import { useEffect, useState } from "react";
 import { IProjectListItem } from "./interfaces/project";
 import { CRUDService } from "./services/crudService";
 import { toast } from "sonner";
 import * as CONST from "./constants";
 import * as URL_CONST from "../shared/constants/urlConstants";
+import { generateColumns } from "../shared/columns";
+import { IActionItem } from "../shared/interfaces/interfaces";
+import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
 export function Projects() {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState<IProjectListItem[]>([]);
   let breadcrumbItems: any = [];
 
   useEffect(() => {
     fetchProjects();
-    setBreadcrumb();
   }, []);
 
   const setBreadcrumb = () => {
@@ -29,12 +32,13 @@ export function Projects() {
       },
     ];
   };
+  setBreadcrumb();
 
   const fetchProjects = async () => {
     try {
       const res = await CRUDService.getAllProjects();
       setProjects(res);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const createProject = async (data: IProjectListItem) => {
@@ -49,12 +53,34 @@ export function Projects() {
     fetchProjects();
   };
 
+  const handleView = (row: IProjectListItem) => {
+    navigate(`/projects/${row.id}/flows`);
+  }
+
+  const actions: IActionItem[] = [
+    {
+      label: "Edit",
+      icon: <IconEdit />,
+      onClick: () => { }
+    },
+    {
+      label: "View",
+      icon: <IconEye />,
+      onClick: handleView
+    },
+    {
+      label: "Delete",
+      icon: <IconTrash />,
+      onClick: handleDelete
+    }
+  ];
+
   return (
     <>
       <Header breadcrumbs={breadcrumbItems} />
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="container mx-auto p-2 mt-2">
         <DataTable
-          columns={columns(handleDelete)}
+          columns={generateColumns(CONST.PROJECT_LIST_COLUMNS, actions)}
           data={projects}
           showCreate={true}
           filterKey="name"

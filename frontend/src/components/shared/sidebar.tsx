@@ -1,8 +1,5 @@
 import * as React from "react"
 import {
-  Command
-} from "lucide-react"
-import {
   IconDashboard,
   IconUsers,
   IconFolder,
@@ -10,11 +7,9 @@ import {
   IconMessage
 } from "@tabler/icons-react"
 import { NavMain } from "@/components/shared/navbar/nav-main"
-import { NavUser } from "@/components/shared/navbar/nav-user"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -58,17 +53,28 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant="floating" {...props} collapsible="icon" style={{ background: "#020617" }} className="[&_[data-sidebar=sidebar]]:bg-[#272429]/60
+    [&_[data-sidebar=sidebar]]:backdrop-blur-sm">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                {/* <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Command className="size-4" />
-                </div>
+                </div> */}
+              
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">DDE</span>
+                  <svg width="120" height="38" viewBox="0 0 220 48" xmlns="http://www.w3.org/2000/svg">
+                    <text x="0" y="34"
+                      font-family="Inter, Arial, sans-serif"
+                      font-size="32"
+                      font-weight="600"
+                      // fill="#1E40AF">
+                      fill="#714f71">
+                      Guide<tspan fill="#14B8A6">Dx</tspan>
+                    </text>
+                  </svg>
                 </div>
               </a>
             </SidebarMenuButton>
@@ -78,9 +84,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
     </Sidebar>
   )
 }

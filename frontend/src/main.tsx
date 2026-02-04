@@ -1,7 +1,5 @@
-// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Projects } from "./components/project/projects.tsx";
 import { Dashboard } from "./components/dashbord.tsx";
@@ -18,6 +16,7 @@ import { DiagnosisSummary } from "./components/chat/components/diagnosis-summary
 import ProtectedRoute from "./ProtectedRoute.tsx";
 import PublicRoute from "./PublicRoute.tsx";
 import AuthProvider from "./AuthProvider.tsx";
+import Home from "./components/home/home.tsx";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +24,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <App />,
+        element: <Home />,
       },
       {
         path: "/login",

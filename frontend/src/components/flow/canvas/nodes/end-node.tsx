@@ -1,27 +1,61 @@
 import { Handle, Position } from "@xyflow/react";
 import { EndDialog } from "./end-dialog";
-import { IconEdit } from "@tabler/icons-react";
 import { IEndNode } from "../../interfaces/flow-interface";
+import { NodeAction } from "./node-action";
+import { useState } from "react";
+import * as CONST from "../../constants";
 
 export function EndNode({ id, data }: IEndNode) {
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [mode, setMode] = useState<String>(CONST.MODE.VIEW);
+
   const handleEdit = (nodeInfo: any) => {
     data.onEdit(id, nodeInfo);
   };
+
+  const onEdit = () => {
+    setShowDialog(true);
+    setMode(CONST.MODE.EDIT);
+  }
+
+  const onView = () => {
+    setShowDialog(true);
+    setMode(CONST.MODE.VIEW);
+  }
+
+  const closeDialog = () => {
+    setShowDialog(false);
+  }
+
+  const onDelete = () => {
+
+  }
+
   return (
-    <div className="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white font-medium w-[200px] text-center">
-      {data.label}
+    <div className="bg-gray-800 border border-gray-700 rounded-lg p-0 w-[200px] h-[150px] text-white">
+      <div className="flex justify-between p-3 border-b">
+        <div className="flex flex-col w-0 flex-1">
+          <h4 className="text-sm font-medium truncate" title={data.label}>
+            {data.label}
+          </h4>
+          {/* <p className="text-xs text-muted-foreground truncate" title={data.type}>
+          </p> */}
+        </div>
+        <NodeAction onEdit={onEdit} onView={onView} onDelete={onDelete} />
+      </div>
       <Handle
         type="target"
         position={Position.Top}
         className="w-3 h-3 bg-indigo-500 border-2 border-white"
       />
-      <div className="flex items-end justify-between mb-2">
-        <EndDialog
-          icon={<IconEdit></IconEdit>}
-          data={data}
-          editContent={handleEdit}
-        ></EndDialog>
-      </div>
+
+      <EndDialog
+        open={showDialog}
+        onClose={closeDialog}
+        data={data}
+        editContent={handleEdit}
+      ></EndDialog>
     </div>
   );
 }

@@ -35,7 +35,7 @@ export function TicketInfo() {
   return (
     <>
       <Header breadcrumbs={breadcrumbItems} />
-      <div className="flex flex-1 flex-col gap-7 p-4 pt-0">
+      <div className="container mx-auto max-w-6xl p-2 mt-4">
         {/* Title Section */}
         <div>Review: Test Diagnostic Flow</div>
 

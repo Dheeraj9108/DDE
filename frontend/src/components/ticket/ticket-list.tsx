@@ -46,7 +46,7 @@ export function TicketList() {
   return (
     <>
       <Header breadcrumbs={breadcrumbItems} />
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="container mx-auto max-w-6xl p-2 mt-4">
         <Tabs defaultValue="raisedByMe">
           <TabsList>
             <TabsTrigger value="raisedByMe">Raised By Me</TabsTrigger>

@@ -24,16 +24,10 @@ import {
 } from "@/components/ui/select";
 import { BulletInput } from "./bullet-input";
 
-export function EndDialog({ icon, data, editContent }: any) {
+export function EndDialog({open, onClose, data, editContent }: any) {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onClose}>
       <form>
-        <DialogTrigger
-          asChild
-          className="w-full bg-yellow-600 hover:bg-yellow-700 text-white text-sm"
-        >
-          <Button variant="outline">{icon}</Button>
-        </DialogTrigger>
         <DialogContent className="sm:max-w-[700px]">
           <DialogHeader>
             <DialogTitle>{CONST.EDIT_NODE}</DialogTitle>

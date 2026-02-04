@@ -1,41 +1,65 @@
 import { Handle, Position } from "@xyflow/react";
 import { GitBranch } from "lucide-react";
 import { EditDialog } from "./edit-dialog";
-import { DeleteAlertDialog } from "./delete-alert-dialog";
-import { IconEdit, IconEye } from "@tabler/icons-react";
 import * as CONST from "../../constants";
-import { IConditionalSplitNodeProps } from "../../interfaces/flow-interface";
+import { NodeAction } from "./node-action";
+import { useState } from "react";
 
-export function ConditionalSplitNode({ id, data }: IConditionalSplitNodeProps) {
+export function ConditionalSplitNode({ id, data }: any) {
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [mode, setMode] = useState<String>(CONST.MODE.VIEW);
+
   const handleEdit = (nodeInfo: any) => {
     data.onEdit(id, nodeInfo);
   };
 
+  const onEdit = () => {
+    setShowDialog(true);
+    setMode(CONST.MODE.EDIT);
+  }
+
+  const onView = () => {
+    setShowDialog(true);
+    setMode(CONST.MODE.VIEW);
+  }
+
+  const closeDialog = () => {
+    setShowDialog(false);
+  }
+
+  const onDelete=()=>{
+
+  }
+
   return (
-    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 w-[200px] text-white">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <GitBranch className="w-4 h-4 text-indigo-400" />
-          <span className="font-medium">{data.label}</span>
+    <div className="bg-gray-800 border border-gray-700 rounded-lg p-0 w-[200px] h-[150px] text-white">
+      <div className="flex justify-between p-3 border-b">
+        <div className="flex flex-col w-0 flex-1">
+          <h4 className="text-sm font-medium truncate" title={data.label}>
+            <div className="flex justify-start items-center gap-2">
+              <GitBranch className="w-4 h-4 text-indigo-400" />
+              <span className="font-medium">{data.label}</span>
+            </div>
+          </h4>
+          <p className="text-xs text-muted-foreground truncate" title={data.type}>
+            {/* {data.type} */}
+          </p>
         </div>
-        <DeleteAlertDialog></DeleteAlertDialog>
+        <NodeAction onEdit={onEdit} onView={onView} onDelete={onDelete}/>
       </div>
 
-      <div className="">{data.prompt}</div>
-      <div className="flex items-end justify-between mb-2">
-        <EditDialog
-          icon={<IconEdit></IconEdit>}
-          data={data}
-          editContent={(nodeInfo: any) => handleEdit(nodeInfo)}
-          mode={CONST.MODE.EDIT}
-        ></EditDialog>
-        <EditDialog
-          icon={<IconEye></IconEye>}
-          data={data}
-          editContent={(nodeInfo: any) => handleEdit(nodeInfo)}
-          mode={CONST.MODE.VIEW}
-        ></EditDialog>
+      <div className="p-3">
+        <div className="break-all multiline-truncate">{data.prompt}</div>
       </div>
+
+      <EditDialog
+        open={showDialog}
+        onClose={closeDialog}
+        data={data}
+        editContent={(nodeInfo: any) => handleEdit(nodeInfo)}
+        mode={mode}
+      ></EditDialog>
 
       <Handle
         type="target"
@@ -51,5 +75,3 @@ export function ConditionalSplitNode({ id, data }: IConditionalSplitNodeProps) {
     </div>
   );
 }
-
-// '{"label":"Add Button"}'::jsonb

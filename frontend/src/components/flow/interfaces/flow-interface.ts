@@ -44,6 +44,7 @@ export interface IActionNodeProps {
   id: string;
   data: {
     label: string;
+    prompt:string;
     onAddOutput: (arr: any[]) => void;
     onEdit: (id: string, nodeInfo: any) => void;
   };
@@ -79,3 +80,9 @@ export interface ITerminalNode {
   recommendedSteps: string[];
   onEdit: (id: string, nodeInfo: any) => void;
 }
+
+export type NodeActionProp = {
+  onEdit: () => void;
+  onView: () => void;
+  onDelete: () => void;
+};

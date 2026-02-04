@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import * as CONST from "../constants";
 import { PayLoadBuilder } from "../builder/payload-builder";
 import { IFlow, IFlowPayLoad, IOption } from "../interfaces/flow-interface";
+import { Header } from "@/components/shared/header";
 
 const nodeTypes: NodeTypes = {
   startNode: StartNode,
@@ -478,6 +479,29 @@ export function FlowBuilder() {
     } catch (error) {}
   };
 
+  let breadcrumbItems: any = [];
+  const setBreadcrumb = () => {
+    breadcrumbItems = [
+      {
+        item: "Home",
+        url: "/",
+      },
+      {
+        item: "Projects",
+        url: "/projects",
+      },
+      {
+        item: "Flows",
+        url: "/flows",
+      },
+      {
+        item: "Canvas",
+        url: "/canvas",
+      },
+    ];
+  };
+  setBreadcrumb();
+
   return (
     <div className="w-full h-full bg-gray-900">
       <ReactFlow
@@ -493,10 +517,11 @@ export function FlowBuilder() {
         defaultEdgeOptions={defaultEdgeOptions}
         nodesDraggable={false}
       >
+        <Header breadcrumbs={breadcrumbItems} />
         <Controls className="bg-gray-800 border-gray-700" />
         <Background color="#374151" gap={20} />
 
-        <Panel position="top-right" className="flex items-center gap-2">
+        <Panel position="bottom-right" className="flex items-center gap-2 mt-4">
           <div
             ref={searchRef}
             className="flex items-center bg-gray-800 rounded-md border border-gray-700 p-1"
@@ -526,6 +551,9 @@ export function FlowBuilder() {
           </div>
 
           <Button onClick={saveFlow}>{CONST.SAVE}</Button>
+          <Button onClick={saveFlow}>{CONST.START_REVIEW}</Button>
+          <Button onClick={saveFlow}>{CONST.APPROVE}</Button>
+          <Button onClick={saveFlow}>{CONST.REQUEST_CHANGE}</Button>
         </Panel>
       </ReactFlow>
     </div>

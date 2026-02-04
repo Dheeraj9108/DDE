@@ -36,8 +36,8 @@ public class Flow {
 	
 	private String description;
 	
-//	@Column(nullable = false)
-//    private Integer version;
+	@Column(nullable = false)
+    private Integer version;
 //
 //    @Enumerated(EnumType.STRING)
 //    private FlowStatus status; // DRAFT, PUBLISHED, ARCHIVED

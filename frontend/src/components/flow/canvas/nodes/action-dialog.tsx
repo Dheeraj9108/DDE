@@ -26,7 +26,7 @@ import * as CONST from "../../constants";
 import { IOption, IRange } from "../../interfaces/flow-interface";
 import { EvidencePopover } from "./evidence-dialog";
 
-export function ActionDialog({ mode, data, editContent }: any) {
+export function ActionDialog({open, onClose, mode, data, editContent }: any) {
   const labelRef = useRef(data.label);
   const contentRef = useRef(data.prompt);
   const [actionType, setActionType] = useState(data.actionType);
@@ -249,13 +249,13 @@ export function ActionDialog({ mode, data, editContent }: any) {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onClose}>
       <form>
-        <DialogTrigger asChild className="w-full text-white text-sm">
+        {/* <DialogTrigger asChild className="w-full text-white text-sm">
           <div className="bg-orange-600 text-white text-xs px-3 py-1 rounded text-center">
             {CONST.SETUP_ACTION}
           </div>
-        </DialogTrigger>
+        </DialogTrigger> */}
         <DialogContent className="sm:max-w-[900px]">
           <div className="max-h-[70vh] overflow-y-auto">
             <DialogHeader>

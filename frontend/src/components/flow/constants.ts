@@ -1,4 +1,9 @@
+import { GenericColumn } from "../shared/interfaces/interfaces";
+
 export const SAVE: string = "Save";
+export const START_REVIEW: string = "Start Review";
+export const APPROVE: string = "Approve";
+export const REQUEST_CHANGE: string = "Request Change";
 export const CANCEL: string = "Cancle";
 export const SAVE_CHANGES: string = "Save Changes";
 export const PROMPT: string = "Prompt";
@@ -49,6 +54,15 @@ export const LOP_DROPDOWN_OPTIONS = [
   { label: "AND", value: "&&" },
   { label: "OR", value: "||" }
 ];
+
+export const FLOW_LIST_COLUMNS :GenericColumn[] = [
+    { key: "name", title: "Name" },
+    { key: "version", title: "Version" },
+    { key: "description", title: "Description" },
+    { key: "createdBy", title: "Created By" },
+    { key: "status", title: "Status" },
+    { key: "actions", title: "Actions", size: 5 },
+  ];
 
 // -------------------- SUCCESS MESSAGES ------------------//
 

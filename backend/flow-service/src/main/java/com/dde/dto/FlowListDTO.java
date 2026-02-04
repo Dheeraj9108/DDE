@@ -9,6 +9,7 @@ import lombok.Data;
 public class FlowListDTO {
 	
 	private UUID id;
+	private Integer version;
 	private String name;
 	private String description;
 	private LocalDateTime createdAt;

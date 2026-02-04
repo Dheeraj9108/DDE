@@ -8,27 +8,28 @@ import { IFlowListItem } from "./interfaces/flow-interface";
 
 export const columns = (
   projectId: string,
-  handleDelete: (id: string) => void
+  handleDelete: (id: string) => void,
+  handleReview: ()=>void
 ): ColumnDef<IFlowListItem>[] => [
   {
     accessorKey: "name",
     size: 20,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Flow Name" />
+      <DataTableColumnHeader column={column} title="Name" />
     ),
   },
   {
     accessorKey: "version",
     size: 20,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Flow Version" />
+      <DataTableColumnHeader column={column} title="Version" />
     ),
   },
   {
     accessorKey: "description",
     size: 100,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Flow Description" />
+      <DataTableColumnHeader column={column} title="Description" />
     ),
   },
   {
@@ -58,7 +59,7 @@ export const columns = (
         handleDelete(row.original.id);
       };
       return (
-        <Action handleNavigate={handleNavigation} handleDelete={onDelete} />
+        <Action handleNavigate={handleNavigation} handleDelete={onDelete} handleReview={handleReview}/>
       );
     },
   },

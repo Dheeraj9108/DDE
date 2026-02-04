@@ -15,8 +15,6 @@ import {
   IconInfoCircle,
   IconMessages,
   IconShare,
-  IconSparkles,
-  IconWand,
 } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { LuLightbulb } from "react-icons/lu";
@@ -64,12 +62,12 @@ export function DiagnosisSummary() {
   return (
     <>
       <Header breadcrumbs={breadcrumbItems} />
-      <div className="container mx-auto px-4 max-w-6xl ">
+      <div className="container mx-auto py-4 px-2 max-w-6xl">
         <div className="text-2xl font-bold mb-1 ">System Analysis</div>
         <div className="text-sm text-gray-500 mb-2">
           Diagnostic Reporting and Issue Identification
         </div>
-        <div className="my-5">
+        <div className="mb-5">
           <div className="grid grid-cols-[70%_30%] gap-4">
             <div className="space-y-4">
 
@@ -191,7 +189,7 @@ export function DiagnosisSummary() {
                       <div className="text-medium font-medium">Key Information Used</div>
                     </div>
                     <ul className="list-disc list-inside pl-5 space-y-1">
-                      {summary?.evidences.map((evidence, i) => (
+                      {summary?.evidences?.map((evidence, i) => (
                         <li key={i} className="text-slate-500 text-sm marker:text-blue-500/25 hover:marker:text-blue-500">{evidence}</li>
                       ))}
                     </ul>
@@ -306,7 +304,7 @@ export function DiagnosisSummary() {
                       Recommended Steps</div>
                   </div>
                   <ul className="list-disc list-inside pl-5 space-y-1">
-                    {summary?.recommendedSteps.map((step, i) => {
+                    {summary?.recommendedSteps?.map((step, i) => {
                       return <li key={i} className="text-slate-500 text-sm marker:text-blue-500/25 hover:marker:text-blue-500">{step}</li>;
                     })}
                   </ul>
