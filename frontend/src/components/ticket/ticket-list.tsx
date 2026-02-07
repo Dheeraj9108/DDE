@@ -46,7 +46,8 @@ export function TicketList() {
   return (
     <>
       <Header breadcrumbs={breadcrumbItems} />
-      <div className="container mx-auto max-w-6xl p-2 mt-4">
+      <div className="container mx-auto max-w-6xl p-2 mt-4 space-y-4 ">
+        <div className="text-2xl font-bold ">Tickets</div>
         <Tabs defaultValue="raisedByMe">
           <TabsList>
             <TabsTrigger value="raisedByMe">Raised By Me</TabsTrigger>
@@ -59,7 +60,7 @@ export function TicketList() {
               showCreate={false}
               filterKey="name"
             >
-              <CreateTicketDialog onCreate={()=>{}}/>
+              <CreateTicketDialog onCreate={() => { }} />
             </DataTable>
           </TabsContent>
           <TabsContent value="assignedToMe">

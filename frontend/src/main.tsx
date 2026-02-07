@@ -3,7 +3,7 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Projects } from "./components/project/projects.tsx";
 import { Dashboard } from "./components/dashbord.tsx";
-import { Flow } from "./components/flow/flow.tsx";
+import { Flow } from "./components/flow/flow-list/flow.tsx";
 import { Teams } from "./components/team/team.tsx";
 import { Canvas } from "./components/flow/canvas/canvas.tsx";
 import { Login } from "./components/login/login.tsx";

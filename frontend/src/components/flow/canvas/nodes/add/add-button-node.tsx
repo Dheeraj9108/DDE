@@ -1,7 +1,7 @@
 "use client";
 
 import { Handle, Position, useReactFlow } from "@xyflow/react";
-import { NodeSelector } from "./node-selector";
+import { NodeSelector } from "../utils/node-selector";
 
 interface AddButtonNodeProps {
   id: string;

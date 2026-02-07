@@ -1,9 +1,12 @@
 import { Handle, Position } from "@xyflow/react";
-import { GitBranch } from "lucide-react";
+import { Eye, GitBranch, Pencil, Trash } from "lucide-react";
 import { EditDialog } from "./edit-dialog";
-import * as CONST from "../../constants";
-import { NodeAction } from "./node-action";
+import * as CONST from "../../../constants";
+import { NodeAction } from "../utils/node-action";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
+import { IconMessageCircleFilled } from "@tabler/icons-react";
+import { INodeAction } from "@/components/flow/interfaces/flow-interface";
 
 export function ConditionalSplitNode({ id, data }: any) {
 
@@ -28,12 +31,33 @@ export function ConditionalSplitNode({ id, data }: any) {
     setShowDialog(false);
   }
 
-  const onDelete=()=>{
-
+ const onDelete = () => {
+    data.onDelete(id);
   }
 
+  const nodeActions: INodeAction[] = [
+    {
+      label: "Edit",
+      icon: <Pencil />,
+      onClick: onEdit
+    },
+    {
+      label: "View",
+      icon: <Eye />,
+      onClick: onView
+    },
+    {
+      label: "Delete",
+      icon: <Trash />,
+      onClick: onDelete
+    }
+  ];
+
+
   return (
-    <div className="bg-gray-800 border border-gray-700 rounded-lg p-0 w-[200px] h-[150px] text-white">
+    <div className={cn("bg-gray-800 border border-gray-700 rounded-lg p-0 w-[200px] h-[150px] text-white",
+      data.comments && "relative border-yellow-400"
+    )}>
       <div className="flex justify-between p-3 border-b">
         <div className="flex flex-col w-0 flex-1">
           <h4 className="text-sm font-medium truncate" title={data.label}>
@@ -46,11 +70,11 @@ export function ConditionalSplitNode({ id, data }: any) {
             {/* {data.type} */}
           </p>
         </div>
-        <NodeAction onEdit={onEdit} onView={onView} onDelete={onDelete}/>
+        <NodeAction actions={nodeActions} />
       </div>
 
       <div className="p-3">
-        <div className="break-all multiline-truncate">{data.prompt}</div>
+        <div className="break-all multiline-truncate">{data.content}</div>
       </div>
 
       <EditDialog
@@ -72,6 +96,9 @@ export function ConditionalSplitNode({ id, data }: any) {
         position={Position.Bottom}
         className="w-3 h-3 bg-green-500 border-2 border-white"
       />
+      {data.comments && <div className="absolute -top-5 -right-5 text-yellow-300">
+        <IconMessageCircleFilled />
+      </div>}
     </div>
   );
 }

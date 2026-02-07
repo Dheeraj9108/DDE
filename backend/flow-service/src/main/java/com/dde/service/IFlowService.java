@@ -10,6 +10,7 @@ import com.dde.dto.FlowListDTO;
 import com.dde.dto.FlowMetadataDTO;
 import com.dde.dto.FlowTemplateDTO;
 import com.dde.dto.QuestionDTO;
+import com.dde.dto.ReviewRequestDTO;
 import com.dde.dto.StartDiagnosisDTO;
 import com.dde.dto.StartDiagnosisRequestDTO;
 import com.dde.dto.SummaryDTO;
@@ -36,4 +37,8 @@ public interface IFlowService {
 	QuestionDTO nextQuestion(UserResponseDTO userResponse);
 	
 	SummaryDTO getSummary(UUID sessionID);
+	
+	void startReview(UUID id);
+	
+	void requestReview(ReviewRequestDTO reviewRequestDTO);
 }

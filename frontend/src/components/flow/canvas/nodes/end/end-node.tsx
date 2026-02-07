@@ -1,9 +1,12 @@
 import { Handle, Position } from "@xyflow/react";
 import { EndDialog } from "./end-dialog";
-import { IEndNode } from "../../interfaces/flow-interface";
-import { NodeAction } from "./node-action";
+import { IEndNode, INodeAction } from "../../../interfaces/flow-interface";
+import { NodeAction } from "../utils/node-action";
 import { useState } from "react";
-import * as CONST from "../../constants";
+import * as CONST from "../../../constants";
+import { IconMessageCircleFilled } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
+import { Eye, Pencil, Trash } from "lucide-react";
 
 export function EndNode({ id, data }: IEndNode) {
 
@@ -29,11 +32,31 @@ export function EndNode({ id, data }: IEndNode) {
   }
 
   const onDelete = () => {
-
+    data.onDelete(id);
   }
 
+  const nodeActions: INodeAction[] = [
+    {
+      label: "Edit",
+      icon: <Pencil />,
+      onClick: onEdit
+    },
+    {
+      label: "View",
+      icon: <Eye />,
+      onClick: onView
+    },
+    {
+      label: "Delete",
+      icon: <Trash />,
+      onClick: onDelete
+    }
+  ];
+
   return (
-    <div className="bg-gray-800 border border-gray-700 rounded-lg p-0 w-[200px] h-[150px] text-white">
+    <div className={cn("bg-gray-800 border border-gray-700 rounded-lg p-0 w-[200px] h-[150px] text-white",
+      data.comments && "relative border-yellow-400"
+    )}>
       <div className="flex justify-between p-3 border-b">
         <div className="flex flex-col w-0 flex-1">
           <h4 className="text-sm font-medium truncate" title={data.label}>
@@ -42,7 +65,7 @@ export function EndNode({ id, data }: IEndNode) {
           {/* <p className="text-xs text-muted-foreground truncate" title={data.type}>
           </p> */}
         </div>
-        <NodeAction onEdit={onEdit} onView={onView} onDelete={onDelete} />
+        <NodeAction actions={nodeActions} />
       </div>
       <Handle
         type="target"
@@ -56,6 +79,10 @@ export function EndNode({ id, data }: IEndNode) {
         data={data}
         editContent={handleEdit}
       ></EndDialog>
+
+      {data.comments && <div className="absolute -top-5 -right-5 text-yellow-300">
+        <IconMessageCircleFilled />
+      </div>}
     </div>
   );
 }

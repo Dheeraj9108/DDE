@@ -7,7 +7,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,13 +21,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
-import * as CONST from "../../constants";
-import { IOption, IRange } from "../../interfaces/flow-interface";
-import { EvidencePopover } from "./evidence-dialog";
+import * as CONST from "../../../constants";
+import { IOption, IRange } from "../../../interfaces/flow-interface";
+import { EvidencePopover } from "../utils/evidence-dialog";
 
-export function ActionDialog({open, onClose, mode, data, editContent }: any) {
+export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
   const labelRef = useRef(data.label);
-  const contentRef = useRef(data.prompt);
+  const contentRef = useRef(data.content);
   const [actionType, setActionType] = useState(data.actionType);
   const [options, setOptions] = useState<IOption[]>(data.options || []);
   const [ranges, setRanges] = useState<IRange[]>(
@@ -50,8 +49,20 @@ export function ActionDialog({open, onClose, mode, data, editContent }: any) {
       ...range,
       label: `${range.label} ( ${label} ${range.rop1} ${range.rop1Value} ${range.lop} ${label} ${range.rop2} ${range.rop2Value} )`,
     }));
+
+    if (updatedRangeList) {
+      updatedRangeList.push({
+        label: "else",
+        rop1: "",
+        rop1Value: "",
+        lop: "",
+        rop2: "",
+        rop2Value: "",
+      })
+    }
+
     data.label = label;
-    data.prompt = contentRef.current.value;
+    data.content = contentRef.current.value;
     data.actionType = actionType;
     data.options = options;
     data.ranges = updatedRangeList;
@@ -279,7 +290,7 @@ export function ActionDialog({open, onClose, mode, data, editContent }: any) {
                 <Label htmlFor="username-1">{CONST.PROMPT}</Label>
                 <Textarea
                   placeholder="Type your message here."
-                  defaultValue={data.prompt}
+                  defaultValue={data.content}
                   ref={contentRef}
                   disabled={mode === CONST.MODE.VIEW}
                 />

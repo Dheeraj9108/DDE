@@ -24,6 +24,7 @@ import com.dde.dto.FlowListDTO;
 import com.dde.dto.FlowMetadataDTO;
 import com.dde.dto.FlowTemplateDTO;
 import com.dde.dto.QuestionDTO;
+import com.dde.dto.ReviewRequestDTO;
 import com.dde.dto.StartDiagnosisDTO;
 import com.dde.dto.StartDiagnosisRequestDTO;
 import com.dde.dto.SummaryDTO;
@@ -90,5 +91,17 @@ public class FlowController {
 	@GetMapping("/summary/{sessionId}")
 	public ResponseEntity<SummaryDTO> getSummary(@PathVariable("sessionId")UUID sessionId){
 		return new ResponseEntity<>(flowService.getSummary(sessionId),HttpStatus.OK);
+	}
+	
+	@PostMapping("/{id}/startReview")
+	public ResponseEntity<String> startReview(@PathVariable("id") UUID id){
+		flowService.startReview(id);
+		return new ResponseEntity<String>("",HttpStatus.OK);
+	}
+	
+	@PostMapping("/requestReview")
+	public ResponseEntity<String> requestReview(@RequestBody ReviewRequestDTO reviewRequestDTO){
+		flowService.requestReview(reviewRequestDTO);
+		return new ResponseEntity<>("",HttpStatus.OK);
 	}
 }

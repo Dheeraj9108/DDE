@@ -14,6 +14,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 
 const data = {
@@ -53,7 +54,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar variant="floating" {...props} collapsible="icon" style={{ background: "#020617" }} className="[&_[data-sidebar=sidebar]]:bg-[#272429]/60
+    <Sidebar variant="sidebar" {...props} collapsible="icon" style={{ background: "#020617" }} className="[&_[data-sidebar=sidebar]]:bg-[#272429]/60
     [&_[data-sidebar=sidebar]]:backdrop-blur-sm">
       <SidebarHeader>
         <SidebarMenu>

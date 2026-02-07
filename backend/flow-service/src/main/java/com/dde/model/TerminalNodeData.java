@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class TerminalNodeData extends NodeData{
-	private String label;
 	private String issue;
 	private String summary;
 	private String status;

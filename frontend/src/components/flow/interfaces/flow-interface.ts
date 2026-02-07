@@ -1,4 +1,5 @@
 import { Edge, Node } from "@xyflow/react";
+import { ReactNode } from "react";
 
 export interface IFlowListItem {
   id: string;
@@ -6,7 +7,12 @@ export interface IFlowListItem {
   version: number;
   description: string;
   createdBy: string;
-  status: "Checked-IN" | "Checked-OUT";
+  status:
+    | "Draft"
+    | "Submitted"
+    | "Under Review"
+    | "Approved"
+    | "Requested Changes";
 }
 
 export interface IFlow {
@@ -35,7 +41,7 @@ export interface IConditionalSplitNodeProps {
   id: string;
   data: {
     label: string;
-    prompt: string;
+    content: string;
     onEdit: (id: string, nodeInfo: any) => void;
   };
 }
@@ -44,8 +50,10 @@ export interface IActionNodeProps {
   id: string;
   data: {
     label: string;
-    prompt:string;
+    content: string;
+    comments: string[];
     onAddOutput: (arr: any[]) => void;
+    onDelete: (id: string) => void;
     onEdit: (id: string, nodeInfo: any) => void;
   };
 }
@@ -78,11 +86,17 @@ export interface ITerminalNode {
   status: string;
   confidence: number;
   recommendedSteps: string[];
+  comments: string[];
+  onDelete: (id: string) => void;
   onEdit: (id: string, nodeInfo: any) => void;
 }
 
 export type NodeActionProp = {
-  onEdit: () => void;
-  onView: () => void;
-  onDelete: () => void;
+  actions: INodeAction[];
 };
+
+export interface INodeAction {
+  label: string;
+  icon: ReactNode;
+  onClick: () => void;
+}

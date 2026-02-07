@@ -8,7 +8,7 @@ interface ResultNodeProps {
 
 export function ResultNode({ data }: ResultNodeProps) {
   return (
-    <div className="p-3 bg-gray-800 border border-gray-700 rounded-lg text-white font-medium w-[200px] text-center">
+    <div className="p-3 bg-gray-800 border border-gray-700 rounded-lg text-white font-medium w-[200px] h-[150px] text-center">
       {data.label}
       <Handle
           type="target"

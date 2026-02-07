@@ -27,11 +27,13 @@ import com.dde.dto.FlowTemplateDTO;
 import com.dde.dto.NodeDTO;
 import com.dde.dto.NodesWrapper;
 import com.dde.dto.QuestionDTO;
+import com.dde.dto.ReviewRequestDTO;
 import com.dde.dto.StartDiagnosisDTO;
 import com.dde.dto.StartDiagnosisRequestDTO;
 import com.dde.dto.SummaryDTO;
 import com.dde.dto.UserResponseDTO;
 import com.dde.enums.DiagnosisStatus;
+import com.dde.enums.FlowStatus;
 import com.dde.enums.InputType;
 import com.dde.model.Edge;
 import com.dde.model.Flow;
@@ -199,16 +201,9 @@ public class FlowServiceImpl implements IFlowService {
 		Node questionNode = getFirstQuestion(flow.getId());
 		session.setCurrentNodeId(questionNode.getNodeId());
 		session = sessionRepo.save(session);
+		
+		QuestionDTO question = getQuestion(session, questionNode);
 
-		QuestionDTO question = new QuestionDTO();
-		question.setSessionId(session.getId());
-		question.setFlowId(flow.getId());
-		if (questionNode.getData() instanceof InternalNodeData nodeData) {
-			question.setContent(nodeData.getPrompt());
-		}
-		question.setInputType(InputType.BOOLEAN);
-		question.setOptions(List.of("Yes", "No"));
-		question.setNodeId(questionNode.getId());
 		dto.setQuestion(question);
 		dto.setSessionId(session.getId());
 		return dto;
@@ -230,13 +225,17 @@ public class FlowServiceImpl implements IFlowService {
 		session.getSteps().add(sessionStep);
 		Node nextNode = getNextNode(session.getFlowId(), userResponse.getNodeId(), userResponse.getAnswer());
 		session.setCurrentNodeId(nextNode.getNodeId());
-		sessionRepo.save(session);
+		sessionRepo.save(session);		
+		return getQuestion(session, nextNode);
+	}
+	
+	private QuestionDTO getQuestion(Session session, Node nextNode) {
 		QuestionDTO question = new QuestionDTO();
 		question.setSessionId(session.getId());
 		question.setFlowId(session.getFlowId());
 		List<String> options = new ArrayList<>();
 		if (nextNode.getData() instanceof InternalNodeData nodeData) {
-			question.setContent(nodeData.getPrompt());
+			question.setContent(nodeData.getContent());
 			options = Optional.ofNullable(nodeData.getOptions()).orElse(Collections.emptyList()).stream()
 					.map(option -> option.getValue()).collect(Collectors.toList());
 		}
@@ -311,5 +310,18 @@ public class FlowServiceImpl implements IFlowService {
 		});
 		summary.setCoversations(conversations);
 	}
+	
+	@Override
+	public void startReview(UUID id) {
+		Flow flow = flowRepo.findById(id).orElseThrow();
+		flow.setStatus(FlowStatus.UNDER_REVIEW);
+		flowRepo.save(flow);
+	}
 
+	@Override
+	public void requestReview(ReviewRequestDTO reviewRequestDTO) {
+		Flow flow = flowRepo.findById(reviewRequestDTO.getFlowId()).orElseThrow();
+		flow.setStatus(FlowStatus.SUBMITTED);
+		flowRepo.save(flow);
+	}
 }

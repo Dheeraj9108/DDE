@@ -13,13 +13,13 @@ import {
   Panel,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
-import { StartNode } from "./nodes/start-node";
-import { ConditionalSplitNode } from "./nodes/conditional-split-node";
-import { AddButtonNode } from "./nodes/add-button-node";
-import { ActionNode } from "./nodes/action-node";
-import { ResultNode } from "./nodes/resultNode";
+import { StartNode } from "./nodes/start/start-node";
+import { ConditionalSplitNode } from "./nodes/conditional/conditional-split-node";
+import { AddButtonNode } from "./nodes/add/add-button-node";
+import { ActionNode } from "./nodes/action/action-node";
+import { ResultNode } from "./nodes/action/resultNode";
 import dagre from "@dagrejs/dagre";
-import { EndNode } from "./nodes/end-node";
+import { EndNode } from "./nodes/end/end-node";
 import { Button } from "@/components/ui/button";
 import { CRUDService } from "@/components/flow/services/crudService";
 import { NodeSearch } from "@/components/node-search";
@@ -90,6 +90,7 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
 };
 
 export function FlowBuilder() {
+  const [flow, setFlow] = useState<any>();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const nodeIdRef = useRef(3);
@@ -97,10 +98,15 @@ export function FlowBuilder() {
   const searchRef = useRef(null);
   const { id } = useParams();
   const builderRef = useRef<PayLoadBuilder>(null);
+  const edgesRef = useRef<Edge[]>([]);
 
   useEffect(() => {
     getFlowById();
   }, []);
+
+  useEffect(() => {
+    edgesRef.current = edges;
+  }, [edges])
 
   const getFlowById = async () => {
     try {
@@ -120,12 +126,13 @@ export function FlowBuilder() {
 
       setNodes(newNodes);
       setEdges(res?.edges);
+      setFlow(res);
       builderRef.current = new PayLoadBuilder({
         id: id ?? "",
         nodes: newNodes,
         edges: res.edges,
       });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const layoutGraph = useCallback(() => {
@@ -168,6 +175,7 @@ export function FlowBuilder() {
           onAddOutput: (arr: any) => {
             addResultNode(newNodeId, arr);
           },
+          onDelete: deleteNode,
           onEdit: handleEdit,
           nodeType: "INTERNAL",
         },
@@ -177,14 +185,6 @@ export function FlowBuilder() {
 
       setNodes((nds) => {
         const filteredNodes = nds.filter((node) => node.id !== sourceNodeId);
-
-        // outputButtonNode.data.onAdd = (
-        //   type: "conditional" | "action" | "end"
-        // ) => {
-        //   addNode(outputButtonId, type);
-        // };
-
-        // return [...filteredNodes, actionNode, outputButtonNode, resultNode];
         return [...filteredNodes, actionNode];
       });
 
@@ -212,6 +212,10 @@ export function FlowBuilder() {
 
   const addResultNode = useCallback(
     (sourceNodeId: string, arr: any) => {
+      const { nodeIdSet, edgeIdSet } = collectAllNodesAndEdges(sourceNodeId);
+      setNodes((prev) => prev.filter((node) => !nodeIdSet.has(node.id)));
+      setEdges((prev) => prev.filter((edge) => !edgeIdSet.has(edge.id)));
+
       for (let i = 0; i < arr.length; i++) {
         const newResultNodeId = nodeIdRef.current.toString();
         const outputButtonId = (nodeIdRef.current + 1).toString();
@@ -239,11 +243,11 @@ export function FlowBuilder() {
           const newNodes = nodes.map((node) =>
             node.id === sourceNodeId
               ? {
-                  ...node,
-                  data: {
-                    ...node.data,
-                  },
-                }
+                ...node,
+                data: {
+                  ...node.data,
+                },
+              }
               : node,
           );
 
@@ -451,6 +455,13 @@ export function FlowBuilder() {
     [setNodes, setEdges],
   );
 
+  const deleteNode = (rootNodeId: string) => {
+    const { nodeIdSet, edgeIdSet } = collectAllNodesAndEdges(rootNodeId);
+    nodeIdSet.add(rootNodeId);
+    setEdges((prev) => prev.filter(edge => !edgeIdSet.has(edge.id)));
+    setNodes((prev) => prev.filter(node => !nodeIdSet.has(node.id)));
+  }
+
   const handleEdit = (nodeId: string, nodeInfo: any) => {
     setNodes((nodes) => {
       const filteredNodes = nodes.filter((node) => node.id !== nodeId);
@@ -462,6 +473,23 @@ export function FlowBuilder() {
       }
       return newNodes;
     });
+  };
+
+  const collectAllNodesAndEdges = (rootNodeId: string) => {
+    let edgeIdSet = new Set<string>();
+    let nodeIdSet = new Set<string>();
+
+    const collect = (rootNodeId: string) => {
+      edgesRef?.current?.forEach(edge => {
+        if (edge.source === rootNodeId) {
+          nodeIdSet.add(edge.target);
+          edgeIdSet.add(edge.id);
+          collect(edge.target);
+        }
+      });
+    }
+    collect(rootNodeId);
+    return { nodeIdSet, edgeIdSet };
   };
 
   const onConnect = useCallback(
@@ -476,8 +504,13 @@ export function FlowBuilder() {
     try {
       await CRUDService.updateFlow(payload);
       toast.success(CONST.UPDATE_SUCCESS);
-    } catch (error) {}
+    } catch (error) { }
   };
+
+  const startReview = () => {
+    const res = CRUDService.startReview(id || "");
+
+  }
 
   let breadcrumbItems: any = [];
   const setBreadcrumb = () => {
@@ -503,60 +536,66 @@ export function FlowBuilder() {
   setBreadcrumb();
 
   return (
-    <div className="w-full h-full bg-gray-900">
-      <ReactFlow
-        onPaneClick={() => setIsSearchOpen(false)}
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        fitView
-        className="bg-gray-900"
-        defaultEdgeOptions={defaultEdgeOptions}
-        nodesDraggable={false}
-      >
-        <Header breadcrumbs={breadcrumbItems} />
-        <Controls className="bg-gray-800 border-gray-700" />
-        <Background color="#374151" gap={20} />
+    <>
+      <div className="w-full h-full bg-[#272429]/60 relative">
+        <ReactFlow
+          onPaneClick={() => setIsSearchOpen(false)}
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          fitView
+          className="bg-gray-900"
+          defaultEdgeOptions={defaultEdgeOptions}
+          nodesDraggable={false}
+        >
+          <Controls className="bg-gray-800 border-gray-700" />
+          <Background color="#272429" gap={20} />
+          <Header breadcrumbs={breadcrumbItems} />
 
-        <Panel position="bottom-right" className="flex items-center gap-2 mt-4">
-          <div
-            ref={searchRef}
-            className="flex items-center bg-gray-800 rounded-md border border-gray-700 p-1"
-          >
-            {isSearchOpen ? (
-              <div className="flex items-center gap-1 animate-in fade-in slide-in-from-right-2 duration-200">
-                <NodeSearch className="w-64 bg-transparent border-none focus-visible:ring-0" />
+          <Panel position="top-left" className="flex items-center gap-2 mt-4 absolute !top-12">
+            {/* <div
+              ref={searchRef}
+              className="flex items-center bg-gray-800 rounded-md border border-gray-700 p-1"
+            >
+              {isSearchOpen ? (
+                <div className="flex items-center gap-1 animate-in fade-in slide-in-from-right-2 duration-200">
+                  <NodeSearch className="w-64 bg-transparent border-none focus-visible:ring-0" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsSearchOpen(false)}
+                    className="h-8 w-8 text-gray-400"
+                  >
+                    <X size={16} />
+                  </Button>
+                </div>
+              ) : (
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setIsSearchOpen(false)}
-                  className="h-8 w-8 text-gray-400"
+                  onClick={() => setIsSearchOpen(true)}
+                  className="h-8 w-8 text-gray-400 hover:text-white"
                 >
-                  <X size={16} />
+                  <Search size={18} />
                 </Button>
-              </div>
-            ) : (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(true)}
-                className="h-8 w-8 text-gray-400 hover:text-white"
-              >
-                <Search size={18} />
-              </Button>
-            )}
-          </div>
+              )}
+            </div> */}
 
-          <Button onClick={saveFlow}>{CONST.SAVE}</Button>
-          <Button onClick={saveFlow}>{CONST.START_REVIEW}</Button>
-          <Button onClick={saveFlow}>{CONST.APPROVE}</Button>
-          <Button onClick={saveFlow}>{CONST.REQUEST_CHANGE}</Button>
-        </Panel>
-      </ReactFlow>
-    </div>
+            {flow?.status === "Draft" && <Button onClick={saveFlow}>{CONST.SAVE}</Button>}
+            {flow?.status === "Submitted" && <Button onClick={startReview}>{CONST.START_REVIEW}</Button>}
+            {flow?.status === "Under Review" &&
+              <>
+                <Button onClick={saveFlow}>{CONST.APPROVE}</Button>
+                <Button onClick={saveFlow}>{CONST.REQUEST_CHANGE}</Button>
+              </>
+            }
+          </Panel>
+        </ReactFlow>
+      </div>
+    </>
   );
 }
 

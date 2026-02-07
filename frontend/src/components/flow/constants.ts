@@ -6,8 +6,11 @@ export const APPROVE: string = "Approve";
 export const REQUEST_CHANGE: string = "Request Change";
 export const CANCEL: string = "Cancle";
 export const SAVE_CHANGES: string = "Save Changes";
+export const SUBMIT: string = "Submit";
 export const PROMPT: string = "Prompt";
+export const DESCRIPTION:string = "Description";
 export const LABEL: string = "Label";
+export const TITLE: string = "Title";
 export const EDIT_DIALOG_DESCRIPTION: string =
   "Make changes to your node here. Click save when you&apos;re done.";
 export const ADD: string = "Add";
@@ -21,6 +24,9 @@ export const NODE_TYPE = {
   ADD: "addButton",
   CONDITIONAL: "conditional",
 } as const;
+
+// Review Dialog
+export const REVIEW_DIALOG: string = "Review Dialog";
 
 // EDIT DIALOG
 export const EDIT_NODE: string = "Edit Node";

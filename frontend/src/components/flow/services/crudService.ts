@@ -1,12 +1,11 @@
 import { IFlowPayLoad } from "../interfaces/flow-interface";
 
-const BASE_URL:string = "http://localhost:8080/flows"; 
+const BASE_URL: string = "http://localhost:8080/flows";
 
 const HEADERS = { "Content-Type": "application/json" };
 
 export const CRUDService = {
-
-  getAllFlows: async (projectId:string) => {
+  getAllFlows: async (projectId: string) => {
     try {
       const res = await fetch(`${BASE_URL}?projectId=${projectId}`, {
         method: "GET",
@@ -65,4 +64,29 @@ export const CRUDService = {
       throw error;
     }
   },
+
+  startReview: async (id: string) => {
+    try {
+      const res = await fetch(`${BASE_URL}/${id}/startReview`,{
+        headers:HEADERS,
+        method:"POST"
+      });
+      return await res.json();
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  requestReview:async(payload:any)=>{
+    try {
+      const res = await fetch(`${BASE_URL}/requestReview`,{
+        headers:HEADERS,
+        method:"POST",
+        body:JSON.stringify(payload)
+      });
+      return await res.json();
+    } catch (error) {
+      throw error;
+    }
+  }
 };

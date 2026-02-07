@@ -5,12 +5,13 @@ import { Action } from "./action";
 
 export const generateColumns = <T extends Record<string, any>>(
   columns: GenericColumn[],
-  actions: IActionItem[]
+  actions: IActionItem[],
+  getActionsForRow?: (row: T) => IActionItem[]
 ): ColumnDef<T>[] => {
   return columns.map(col => ({
     accessorKey: col.key as string,
     size: col.size,
     header: ({ column }) => <DataTableColumnHeader column={column} title={col.title} />,
-    cell: ({ row }) => col.key === 'actions' ? <Action actions={actions} row={row.original} /> : row.original[col.key]
+    cell: ({ row }) => col.key === 'actions' ? <Action actions={getActionsForRow ? getActionsForRow(row.original) : actions} row={row.original} /> : row.original[col.key]
   }));
 };

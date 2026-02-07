@@ -78,7 +78,8 @@ export function Projects() {
   return (
     <>
       <Header breadcrumbs={breadcrumbItems} />
-      <div className="container mx-auto p-2 mt-2">
+      <div className="container mx-auto max-w-6xl p-2 mt-2">
+        <div className="text-2xl font-bold mb-1 ">Projects</div>
         <DataTable
           columns={generateColumns(CONST.PROJECT_LIST_COLUMNS, actions)}
           data={projects}

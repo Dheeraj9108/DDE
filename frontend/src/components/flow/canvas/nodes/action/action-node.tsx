@@ -2,15 +2,18 @@
 
 import { Handle, Position } from "@xyflow/react";
 import { ActionDialog } from "./action-dialog";
-import * as CONST from "../../constants";
-import { IActionNodeProps } from "../../interfaces/flow-interface";
-import { NodeAction } from "./node-action";
+import * as CONST from "../../../constants";
+import { IActionNodeProps, INodeAction } from "../../../interfaces/flow-interface";
+import { NodeAction } from "../utils/node-action";
 import { useState } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils";
+import { IconMessageCircleFilled } from "@tabler/icons-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 
 export function ActionNode({ id, data }: IActionNodeProps) {
 
@@ -54,11 +57,31 @@ export function ActionNode({ id, data }: IActionNodeProps) {
   }
 
   const onDelete = () => {
-
+    data.onDelete(id);
   }
 
+  const nodeActions: INodeAction[] = [
+    {
+      label: "Edit",
+      icon: <Pencil />,
+      onClick: onEdit
+    },
+    {
+      label: "View",
+      icon: <Eye />,
+      onClick: onView
+    },
+    {
+      label: "Delete",
+      icon: <Trash />,
+      onClick: onDelete
+    }
+  ];
+
   return (
-    <div className="bg-gray-800 border border-gray-700 rounded-lg p-0 w-[200px] h-[150px] text-white">
+    <div className={cn("bg-gray-800 border border-gray-700 rounded-lg p-0 w-[200px] h-[150px] text-white",
+          data.comments && "relative border-yellow-400"
+        )}>
       <div className="flex justify-between p-2 border-b">
         <div className="flex flex-col w-0 flex-1">
           <h4 className="text-sm font-medium truncate" title={data.label}>
@@ -76,17 +99,17 @@ export function ActionNode({ id, data }: IActionNodeProps) {
             {data.type}
           </p> */}
         </div>
-        <NodeAction onEdit={onEdit} onView={onView} onDelete={onDelete} />
+        <NodeAction actions={nodeActions} />
       </div>
 
       <Tooltip>
         <TooltipTrigger>
           <div className="p-3">
-            <div className="break-all multiline-truncate">{data.prompt}</div>
+            <div className="break-all multiline-truncate">{data.content}</div>
           </div>
         </TooltipTrigger>
         <TooltipContent side="right" className="w-50 break-all bg-[#272429]/60 backdrop-blur-sm">
-          {data.prompt} 
+          {data.content} 
         </TooltipContent>
       </Tooltip>
 
@@ -109,6 +132,9 @@ export function ActionNode({ id, data }: IActionNodeProps) {
         position={Position.Top}
         className="w-3 h-3 bg-blue-500"
       />
+      {data.comments && <div className="absolute -top-5 -right-5 text-yellow-300">
+        <IconMessageCircleFilled />
+      </div>}
     </div>
   );
 }

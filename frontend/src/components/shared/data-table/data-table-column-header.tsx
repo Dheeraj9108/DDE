@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -27,13 +28,13 @@ export function DataTableColumnHeader<TData, TValue>({
   }
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex items-center", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
             size="sm"
-            className="data-[state=open]:bg-accent -ml-3 h-8"
+            className="data-[state=open]:bg-accent -ml-3 h-8 outline-none"
           >
             <span>{title}</span>
             {column.getIsSorted() === "desc" ? (
@@ -61,6 +62,11 @@ export function DataTableColumnHeader<TData, TValue>({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {/* <Input 
+        placeholder="Search name..."
+        value={(column.getFilterValue() as string) ?? ""}
+        onChange={(e) => column.setFilterValue(e.target.value)}
+      /> */}
     </div>
   )
 }

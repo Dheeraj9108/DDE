@@ -12,19 +12,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useRef } from "react";
-import * as CONST from "../../constants";
-import { EvidencePopover } from "./evidence-dialog";
+import * as CONST from "../../../constants";
+import { EvidencePopover } from "../utils/evidence-dialog";
 import { IconMessageCircleFilled } from "@tabler/icons-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { BulletInput } from "./bullet-input";
+import { BulletInput } from "../utils/bullet-input";
 
 export function EditDialog({ open, onClose, mode, data, editContent }: any) {
   const labelRef = useRef(data?.label);
-  const contentRef = useRef(data?.prompt);
+  const contentRef = useRef(data?.content);
 
   const handleSave = () => {
     data.label = labelRef.current.value;
-    data.prompt = contentRef.current.value;
+    data.content = contentRef.current.value;
     // const nodeInfo = {
     //   label: labelRef.current.value,
     //   evidence
@@ -65,7 +65,7 @@ export function EditDialog({ open, onClose, mode, data, editContent }: any) {
               <Label htmlFor="username-1">{CONST.PROMPT}</Label>
               <Textarea
                 placeholder="Type your message here."
-                defaultValue={data?.prompt}
+                defaultValue={data?.content}
                 ref={contentRef}
                 disabled={mode === CONST.MODE.VIEW}
               />
@@ -102,7 +102,7 @@ export function EditDialog({ open, onClose, mode, data, editContent }: any) {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent side="top">
-                  <BulletInput list={[]} onInput={()=>{}} />
+                  <BulletInput list={data.comments} onInput={(comments:string[])=>{data.comments = comments}} />
                 </PopoverContent>
               </Popover>
             </div>

@@ -5,10 +5,10 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Eye, MoreVertical, Pencil, Trash } from "lucide-react";
-import { NodeActionProp } from "../../interfaces/flow-interface";
+import { MoreVertical} from "lucide-react";
+import { NodeActionProp } from "../../../interfaces/flow-interface";
 
-export function NodeAction({ onEdit, onView, onDelete }: NodeActionProp) {
+export function NodeAction({ actions }: NodeActionProp) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -16,9 +16,11 @@ export function NodeAction({ onEdit, onView, onDelete }: NodeActionProp) {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={onEdit}><Pencil />Edit</DropdownMenuItem>
-                    <DropdownMenuItem onClick={onView}><Eye />View</DropdownMenuItem>
-                    <DropdownMenuItem onClick={onDelete}><Trash />Delete</DropdownMenuItem>
+                    {actions.map(action => (
+                        <DropdownMenuItem onClick={action.onClick}>
+                            {action.icon}{action.label}
+                        </DropdownMenuItem>
+                    ))}
                 </DropdownMenuGroup>
             </DropdownMenuContent>
         </DropdownMenu>

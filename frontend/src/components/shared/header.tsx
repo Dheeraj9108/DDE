@@ -15,8 +15,10 @@ export function Header(props: any) {
   }
 
   return (
-    <header className='sticky top-2 z-50 '>
-      <div className='mx-auto bg-[#272429]/60 backdrop-blur-sm rounded-full flex max-w-6xl items-center justify-between gap-6 px-4 py-2 sm:px-6'>
+    // <header className='sticky top-2 z-50 '>
+    <header className='sticky top-0 z-50 border-b'>
+      {/* <div className='mx-auto bg-[#272429]/60 backdrop-blur-sm rounded-full flex max-w-6xl items-center justify-between gap-6 px-4 py-2 sm:px-6'> */}
+      <div className='mx-auto bg-[#272429]/60 backdrop-blur-sm flex items-center justify-between gap-6 px-4 py-2 sm:px-6'>
         <div className='flex items-center gap-4'>
           <SidebarTrigger className='[&_svg]:!size-5' />
           <Separator orientation='vertical' className='hidden sm:block h-4 w-px bg-gray-600/25' />

@@ -8,8 +8,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class InternalNodeData extends NodeData{
-	private String label;
-	private String prompt;
+	private String content;
 	private String actionType;
 	private List<Option> options;
 	private List<Range> ranges;

@@ -8,6 +8,7 @@ export interface IActionItem {
   label: string;
   icon: React.ReactNode;
   onClick: (row: any) => void;
+  condition?:string[]
 }
 
 export interface IAction {

@@ -5,8 +5,8 @@ export const PROJECTS = "Projects";
 
 export const PROJECT_LIST_COLUMNS: GenericColumn[] = [
   { key: "name", title: "Name" },
-  { key: "description", title: "Description" },
-  { key: "createdBy", title: "Created By" },
+  { key: "flows", title: "Flows" },
+  { key: "createdBy", title: "Owner" },
   { key: "createdAt", title: "Created At" },
   { key: "actions", title: "Actions", size: 5 },
 ];
