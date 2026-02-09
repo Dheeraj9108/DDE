@@ -121,6 +121,7 @@ export function FlowBuilder() {
         } else {
           newNode.data.onEdit = handleEdit;
         }
+        newNode.data.onDelete = deleteNode;
         return newNode;
       });
 
@@ -307,6 +308,7 @@ export function FlowBuilder() {
           label: "Conditional Split",
           content: "What is this?",
           onEdit: handleEdit,
+          onDelete: deleteNode,
           nodeType: "INTERNAL",
           options,
         },
@@ -458,8 +460,42 @@ export function FlowBuilder() {
   const deleteNode = (rootNodeId: string) => {
     const { nodeIdSet, edgeIdSet } = collectAllNodesAndEdges(rootNodeId);
     nodeIdSet.add(rootNodeId);
-    setEdges((prev) => prev.filter(edge => !edgeIdSet.has(edge.id)));
-    setNodes((prev) => prev.filter(node => !nodeIdSet.has(node.id)));
+
+    const newNodeId = nodeIdRef.current.toString();
+
+    const addButtonNode: Node = {
+      id: newNodeId,
+      type: "addButton",
+      position: { x: 0, y: 0 },
+      data: {
+        onAdd: addNode,
+        nodeType: "INTERNAL",
+      },
+    };
+
+    nodeIdRef.current = nodeIdRef.current + 1;
+
+    setEdges((prev) => {
+      let sourceEdge:Edge | undefined;
+      const newEdges = prev.filter(edge => {
+        if(edge.target === rootNodeId) sourceEdge = edge;
+        return edge.target !== rootNodeId && !edgeIdSet.has(edge.id)  
+      });
+      if (sourceEdge) {
+        newEdges.push({
+          ...sourceEdge,
+          id: `e${sourceEdge.source}-${newNodeId}`,
+          source: sourceEdge.source,
+          target: newNodeId,
+        });
+      }
+      return [...newEdges];
+    });
+
+    setNodes((prev) => {
+      const newNodes: Node[] = prev.filter(node => !nodeIdSet.has(node.id));
+      return [...newNodes, addButtonNode];
+    });
   }
 
   const handleEdit = (nodeId: string, nodeInfo: any) => {

@@ -4,20 +4,19 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../shared/data-table/data-table-column-header";
 import { Action } from "../shared/action";
 import { useNavigate } from "react-router-dom";
+import { IActionItem } from "../shared/interfaces/interfaces";
 
-export type FlowItem = {
+export type TicketItem = {
   id: string;
   status: string;
   priority: string;
   type: string;
   title: string;
-  context: string;
   createdBy: string;
   lastModified: string;
 };
 
-export const columns = (
-): ColumnDef<FlowItem>[] => [
+export const columns = (allActions: IActionItem[]): ColumnDef<TicketItem>[] => [
   {
     accessorKey: "status",
     size: 20,
@@ -43,14 +42,7 @@ export const columns = (
     accessorKey: "title",
     size: 20,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="title" />
-    ),
-  },
-  {
-    accessorKey: "context",
-    size: 20,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="context" />
+      <DataTableColumnHeader column={column} title="Title" />
     ),
   },
   {
@@ -58,6 +50,13 @@ export const columns = (
     size: 20,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Created By" />
+    ),
+  },
+  {
+    accessorKey: "assignedTo",
+    size: 20,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Assigned To" />
     ),
   },
   {
@@ -77,7 +76,7 @@ export const columns = (
         navigate("/ticketInfo");
       };
       return (
-        <Action handleNavigate={handleNavigation} handleDelete={()=>{}} />
+        <Action actions={allActions} row={row.original} />
       );
     },
   },

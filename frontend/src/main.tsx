@@ -60,11 +60,11 @@ const router = createBrowserRouter([
         element: <Teams />,
       },
       {
-        path: "/ticket",
+        path: "/tickets",
         element: <TicketList />,
       },
       {
-        path: "/ticketInfo",
+        path: "/tickets/:id/:mode",
         element: <TicketInfo />,
       },
       {

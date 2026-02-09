@@ -12,7 +12,7 @@ export default function PrivateLayout() {
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
             <SidebarProvider open={open} onOpenChange={setOpen}>
                 <AppSidebar />
-                <SidebarInset style={{background:"#020617"}}>
+                <SidebarInset style={{ background: "#020617" }}>
                     <Outlet />
                 </SidebarInset>
             </SidebarProvider>

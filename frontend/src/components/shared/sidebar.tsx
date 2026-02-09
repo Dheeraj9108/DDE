@@ -41,7 +41,7 @@ const data = {
     },
     {
       title: "Tickets",
-      url: "/ticket",
+      url: "/tickets",
       icon: IconTicket,
     },
     {
