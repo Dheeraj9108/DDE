@@ -8,11 +8,11 @@ export const CANCEL: string = "Cancle";
 export const SAVE_CHANGES: string = "Save Changes";
 export const SUBMIT: string = "Submit";
 export const PROMPT: string = "Prompt";
-export const DESCRIPTION:string = "Description";
+export const DESCRIPTION: string = "Description";
 export const LABEL: string = "Label";
 export const TITLE: string = "Title";
 export const EDIT_DIALOG_DESCRIPTION: string =
-  "Make changes to your node here. Click save when you&apos;re done.";
+  "Make changes to your node here. Click save when you are done.";
 export const ADD: string = "Add";
 
 export const MODE = {
@@ -53,22 +53,22 @@ export const ROP_DROPDOWN_OPTIONS = [
   { label: "<=", value: "<=" },
   { label: ">", value: ">" },
   { label: ">=", value: ">=" },
-  { label: "==", value: "==" }
+  { label: "==", value: "==" },
 ];
 
 export const LOP_DROPDOWN_OPTIONS = [
   { label: "AND", value: "&&" },
-  { label: "OR", value: "||" }
+  { label: "OR", value: "||" },
 ];
 
-export const FLOW_LIST_COLUMNS :GenericColumn[] = [
-    { key: "name", title: "Name" },
-    { key: "version", title: "Version" },
-    { key: "description", title: "Description" },
-    { key: "createdBy", title: "Created By" },
-    { key: "status", title: "Status" },
-    { key: "actions", title: "Actions", size: 5 },
-  ];
+export const FLOW_LIST_COLUMNS: GenericColumn[] = [
+  { key: "name", title: "Name" },
+  { key: "version", title: "Version" },
+  { key: "description", title: "Description" },
+  { key: "createdBy", title: "Created By" },
+  { key: "status", title: "Status" },
+  { key: "actions", title: "Actions", size: 5 },
+];
 
 // -------------------- SUCCESS MESSAGES ------------------//
 

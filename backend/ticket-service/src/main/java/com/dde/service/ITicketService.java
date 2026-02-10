@@ -13,4 +13,8 @@ public interface ITicketService {
 	void createTicket(TicketInfoDTO ticket);
 	
 	TicketInfoDTO getTicketById(UUID id);
+	
+	void deleteTicket(UUID id);
+	
+	void update(TicketInfoDTO ticketDto);
 }

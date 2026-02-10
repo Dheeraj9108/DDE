@@ -6,5 +6,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ProjectAccessDetails extends TicketDetails{
-	private String projectId;
+	private String id;
+	private String name;
 }

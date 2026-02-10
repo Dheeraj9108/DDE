@@ -22,11 +22,14 @@ export interface IComment{
 }
 
 export interface ITicketDetail{
-
+    id:string;
+    name:string;
+    role:string;
 }
 
 export interface ITicketDialog{
     open:boolean;
     onOpenChange:()=>void,
-    ticket?:ITicket
+    ticket?:ITicket,
+    mode: "Create" | "Edit"
 }

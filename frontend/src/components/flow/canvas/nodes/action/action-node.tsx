@@ -10,7 +10,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { IconMessageCircleFilled } from "@tabler/icons-react";
 import { Eye, Pencil, Trash } from "lucide-react";

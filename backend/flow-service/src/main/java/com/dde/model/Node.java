@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,7 +42,7 @@ public class Node {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "flow_id", nullable=false)
-//	@JsonIgnore
+	@JsonIgnore
 	private Flow flow;
 	
 	@JdbcTypeCode(SqlTypes.JSON)

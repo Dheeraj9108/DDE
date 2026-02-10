@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import com.dde.dto.Conversation;
@@ -201,7 +204,7 @@ public class FlowServiceImpl implements IFlowService {
 		Node questionNode = getFirstQuestion(flow.getId());
 		session.setCurrentNodeId(questionNode.getNodeId());
 		session = sessionRepo.save(session);
-		
+
 		QuestionDTO question = getQuestion(session, questionNode);
 
 		dto.setQuestion(question);
@@ -225,10 +228,10 @@ public class FlowServiceImpl implements IFlowService {
 		session.getSteps().add(sessionStep);
 		Node nextNode = getNextNode(session.getFlowId(), userResponse.getNodeId(), userResponse.getAnswer());
 		session.setCurrentNodeId(nextNode.getNodeId());
-		sessionRepo.save(session);		
+		sessionRepo.save(session);
 		return getQuestion(session, nextNode);
 	}
-	
+
 	private QuestionDTO getQuestion(Session session, Node nextNode) {
 		QuestionDTO question = new QuestionDTO();
 		question.setSessionId(session.getId());
@@ -239,13 +242,21 @@ public class FlowServiceImpl implements IFlowService {
 			options = Optional.ofNullable(nodeData.getOptions()).orElse(Collections.emptyList()).stream()
 					.map(option -> option.getValue()).collect(Collectors.toList());
 		}
-		question.setInputType(InputType.OPTION);
+		setInputType(nextNode, question);
 		question.setEnd(nextNode.getType().equals("endNode"));
 
 		question.setOptions(options);
 		question.setNodeId(nextNode.getId());
 
 		return question;
+	}
+
+	private void setInputType(Node node, QuestionDTO question) {
+		if (node.getType().equals("action")) {
+			question.setInputType(InputType.NUMBER);
+		} else {
+			question.setInputType(InputType.OPTION);
+		}
 	}
 
 	private void saveEvidences(SessionStep sessionStep, UUID flowId, UserResponseDTO userResponse) {
@@ -262,9 +273,8 @@ public class FlowServiceImpl implements IFlowService {
 	}
 
 	private Node getNextNode(UUID flowId, String nodeId, String userAnswer) {
-		List<Edge> edges = edgeRepo.findByFlowIdAndSource(flowId, nodeId);
-		Optional<Edge> matchingEdge = edges.stream().filter(edge -> edge.getData().getCondition().equals(userAnswer))
-				.findFirst();
+
+		Optional<Edge> matchingEdge = getMatchingEdge(flowId, nodeId, userAnswer);
 
 		if (!matchingEdge.isPresent()) {
 			return null;
@@ -276,6 +286,45 @@ public class FlowServiceImpl implements IFlowService {
 			return getNextNode(flowId, nextNode.getId(), userAnswer);
 		}
 		return nextNode;
+	}
+
+	private Optional<Edge> getMatchingEdge(UUID flowId, String nodeId, String userAnswer) {
+		Node curNode = nodeRepo.findByFlowIdAndId(flowId, nodeId);
+		List<Edge> edges = edgeRepo.findByFlowIdAndSource(flowId, nodeId);
+		if (curNode.getType().equals("action")) {
+			return parseExpressions(edges, userAnswer, curNode);
+		}
+		Optional<Edge> matchingEdge = edges.stream().filter(edge -> edge.getData().getCondition().equals(userAnswer))
+				.findFirst();
+		return matchingEdge;
+	}
+
+	private Optional<Edge> parseExpressions(List<Edge> edges, String userAnswer, Node node) {
+		try {
+			Optional<Edge> elseEdge = edges.stream().filter(edge -> edge.getData().getCondition().equals("else"))
+					.findFirst();
+			Double value = Double.parseDouble(userAnswer);
+			ExpressionParser parser = new SpelExpressionParser();
+			StandardEvaluationContext context = new StandardEvaluationContext();
+			context.setVariable(node.getData().getLabel(), value);
+
+			for (Edge edge : edges) {
+				if (!edge.getData().getCondition().equals("else")) {
+
+					Boolean result = parser.parseExpression(edge.getData().getCondition()).getValue(context,
+							Boolean.class);
+
+					if (Boolean.TRUE.equals(result)) {
+						return Optional.of(edge);
+					}
+				}
+			}
+
+			return elseEdge;
+		} catch (Exception e) {
+			// TODO: handle exception
+			return Optional.empty();
+		}
 	}
 
 	@Override
@@ -299,10 +348,7 @@ public class FlowServiceImpl implements IFlowService {
 				.toList());
 
 		List<Conversation> conversations = new ArrayList<>();
-		Optional.ofNullable(session.getSteps())
-		.orElse(Collections.emptyList())
-		.stream()
-		.forEach(step -> {
+		Optional.ofNullable(session.getSteps()).orElse(Collections.emptyList()).stream().forEach(step -> {
 			Conversation conversation = new Conversation();
 			conversation.setAnswer(step.getAnswer());
 			conversation.setPrompt(step.getPrompt());
@@ -310,7 +356,7 @@ public class FlowServiceImpl implements IFlowService {
 		});
 		summary.setCoversations(conversations);
 	}
-	
+
 	@Override
 	public void startReview(UUID id) {
 		Flow flow = flowRepo.findById(id).orElseThrow();

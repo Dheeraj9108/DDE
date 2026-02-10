@@ -7,6 +7,11 @@ import * as CONST from "../../../constants";
 import { IconMessageCircleFilled } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 import { Eye, Pencil, Trash } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function EndNode({ id, data }: IEndNode) {
 
@@ -67,6 +72,18 @@ export function EndNode({ id, data }: IEndNode) {
         </div>
         <NodeAction actions={nodeActions} />
       </div>
+
+      <Tooltip>
+        <TooltipTrigger>
+          <div className="p-3">
+            <div className="break-all multiline-truncate">{data.summary}</div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="w-50 break-all bg-[#272429]/60 backdrop-blur-sm">
+          {data.summary} 
+        </TooltipContent>
+      </Tooltip>
+
       <Handle
         type="target"
         position={Position.Top}

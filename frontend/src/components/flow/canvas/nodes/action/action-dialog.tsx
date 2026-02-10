@@ -33,7 +33,7 @@ export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
   const [ranges, setRanges] = useState<IRange[]>(
     data.ranges ?? [
       {
-        label: "if",
+        label: "",
         rop1: "",
         rop1Value: "",
         lop: "",
@@ -47,7 +47,7 @@ export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
     const label = labelRef.current.value;
     const updatedRangeList = ranges?.map((range) => ({
       ...range,
-      label: `${range.label} ( ${label} ${range.rop1} ${range.rop1Value} ${range.lop} ${label} ${range.rop2} ${range.rop2Value} )`,
+      label: `${label} ${range.rop1} ${range.rop1Value} ${range.lop} ${label} ${range.rop2} ${range.rop2Value}`,
     }));
 
     if (updatedRangeList) {
@@ -89,7 +89,7 @@ export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
     setRanges([
       ...ranges,
       {
-        label: "else if",
+        label: "",
         rop1: "",
         rop1Value: "",
         lop: "",
@@ -135,92 +135,96 @@ export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
             </Button>
             {ranges.map((range, idx) => (
               <div className="grid grid-cols-12">
-                <div className="grid col-span-12 md:col-span-11 gap-3">
-                  <div className="grid grid-cols-12">
-                    <Label htmlFor="" className="col-span-12 md:col-span-2">
-                      {range.label}
-                    </Label>
-                    <Select
-                      onValueChange={(value) => updateRange(idx, "rop1", value)}
-                      value={range.rop1}
-                    >
-                      <SelectTrigger className="w-full col-span-12 md:col-span-2 pr-2">
-                        <SelectValue placeholder="ROP" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="<">{"<"}</SelectItem>
-                          <SelectItem value="<=">{"<="}</SelectItem>
-                          <SelectItem value=">">{">"}</SelectItem>
-                          <SelectItem value=">=">{">="}</SelectItem>
-                          <SelectItem value="==">{"=="}</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      className="col-spn-12 md:col-span-2"
-                      type="number"
-                      defaultValue={range.rop1Value}
-                      onChange={(e) =>
-                        updateRange(idx, "rop1Value", e.target.value)
-                      }
-                    />
-                    <Select
-                      onValueChange={(value) => updateRange(idx, "lop", value)}
-                      value={range.lop}
-                    >
-                      <SelectTrigger className="w-full col-span-12 md:col-span-2">
-                        <SelectValue placeholder="LOP" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {CONST.LOP_DROPDOWN_OPTIONS.map((lop) => (
-                            <SelectItem value={lop.value}>
-                              {lop.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <Select
-                      onValueChange={(value) => updateRange(idx, "rop2", value)}
-                      value={range.rop2}
-                    >
-                      <SelectTrigger className="w-full col-span-12 md:col-span-2">
-                        <SelectValue placeholder="ROP" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {CONST.ROP_DROPDOWN_OPTIONS.map((rop) => (
-                            <SelectItem value={rop.value}>
-                              {rop.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <Input
-                      className="col-spn-12 md:col-span-2"
-                      type="number"
-                      defaultValue={range.rop2Value}
-                      onChange={(e) =>
-                        updateRange(idx, "rop2Value", e.target.value)
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="col-span-12 md:col-span-1 flex justify-end">
-                  <Trash2
-                    className="h-full text-white"
-                    onClick={() => deleteRange(idx)}
-                  />
-                  <EvidencePopover
-                    evidences={range?.evidence || []}
-                    onInput={(val: string[]) =>
-                      updateEvidence(idx, val, CONST.ACTION_TYPE.RANGE)
-                    }
-                  />
-                </div>
+                {range.label !== "else" &&
+                  <>
+                    <div className="grid col-span-12 md:col-span-11 gap-3">
+                      <div className="grid grid-cols-12">
+                        <Label htmlFor="" className="col-span-12 md:col-span-2">
+                          {idx === 0 ? 'if' : 'else if'}
+                        </Label>
+                        <Select
+                          onValueChange={(value) => updateRange(idx, "rop1", value)}
+                          value={range.rop1}
+                        >
+                          <SelectTrigger className="w-full col-span-12 md:col-span-2 pr-2">
+                            <SelectValue placeholder="ROP" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="<">{"<"}</SelectItem>
+                              <SelectItem value="<=">{"<="}</SelectItem>
+                              <SelectItem value=">">{">"}</SelectItem>
+                              <SelectItem value=">=">{">="}</SelectItem>
+                              <SelectItem value="==">{"=="}</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          className="col-spn-12 md:col-span-2"
+                          type="number"
+                          defaultValue={range.rop1Value}
+                          onChange={(e) =>
+                            updateRange(idx, "rop1Value", e.target.value)
+                          }
+                        />
+                        <Select
+                          onValueChange={(value) => updateRange(idx, "lop", value)}
+                          value={range.lop}
+                        >
+                          <SelectTrigger className="w-full col-span-12 md:col-span-2">
+                            <SelectValue placeholder="LOP" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {CONST.LOP_DROPDOWN_OPTIONS.map((lop) => (
+                                <SelectItem value={lop.value}>
+                                  {lop.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <Select
+                          onValueChange={(value) => updateRange(idx, "rop2", value)}
+                          value={range.rop2}
+                        >
+                          <SelectTrigger className="w-full col-span-12 md:col-span-2">
+                            <SelectValue placeholder="ROP" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {CONST.ROP_DROPDOWN_OPTIONS.map((rop) => (
+                                <SelectItem value={rop.value}>
+                                  {rop.label}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          className="col-spn-12 md:col-span-2"
+                          type="number"
+                          defaultValue={range.rop2Value}
+                          onChange={(e) =>
+                            updateRange(idx, "rop2Value", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="col-span-12 md:col-span-1 flex justify-end">
+                      <Trash2
+                        className="h-full text-white"
+                        onClick={() => deleteRange(idx)}
+                      />
+                      <EvidencePopover
+                        evidences={range?.evidence || []}
+                        onInput={(val: string[]) =>
+                          updateEvidence(idx, val, CONST.ACTION_TYPE.RANGE)
+                        }
+                      />
+                    </div>
+                  </>
+                }
               </div>
             ))}
           </>
@@ -262,11 +266,6 @@ export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <form>
-        {/* <DialogTrigger asChild className="w-full text-white text-sm">
-          <div className="bg-orange-600 text-white text-xs px-3 py-1 rounded text-center">
-            {CONST.SETUP_ACTION}
-          </div>
-        </DialogTrigger> */}
         <DialogContent className="sm:max-w-[900px]">
           <div className="max-h-[70vh] overflow-y-auto">
             <DialogHeader>

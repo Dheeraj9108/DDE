@@ -3,6 +3,8 @@ package com.dde.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import lombok.Data;
+
 @JsonTypeInfo(
 		use = JsonTypeInfo.Id.NAME,
 		include = JsonTypeInfo.As.PROPERTY,
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	@JsonSubTypes.Type(value = PermissionDetails.class, name = "Permission Request"),
 	@JsonSubTypes.Type(value = IssueReportDetails.class, name = "Issue Report")
 })
+@Data
 public abstract class TicketDetails {
 
 }

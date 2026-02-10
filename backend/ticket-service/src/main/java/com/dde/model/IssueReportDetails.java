@@ -6,5 +6,5 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class IssueReportDetails extends TicketDetails{
-	private String sessionId;
+	private String id;
 }

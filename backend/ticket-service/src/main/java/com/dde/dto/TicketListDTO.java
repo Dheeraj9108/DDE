@@ -7,8 +7,6 @@ import com.dde.enums.Priority;
 import com.dde.enums.TicketStatus;
 import com.dde.enums.TicketType;
 
-import lombok.Data;
-
 public interface TicketListDTO {
 	
 	UUID getId();

@@ -29,25 +29,26 @@ import { CRUDService } from "./services/crud-service";
 import { ITicketDialog } from "./interfaces/ticket-interface";
 import { useEffect } from "react";
 
-export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
+export function TicketDialog({ open, onOpenChange, ticket, mode }: ITicketDialog) {
 
   const priorities = ["High", "Medium", "Low"];
   const types = ["Permission Request", "Project Access Request", "Flow Review Request"];
 
   useEffect(() => {
-  if (ticket) {
-    form.reset({
-      title: ticket.title ?? "",
-      description: ticket.description ?? "",
-      priority: ticket.priority ?? "Medium",
-      type: ticket.type ?? "Permission Request",
-      assignTo: ticket.assignedTo?.name ?? "",
-      projectId: "",
-      flowId: "",
-      roleId: "",
-    });
-  }
-}, [ticket]);
+    if (ticket) {
+      form.reset({
+        title: ticket.title ?? "",
+        description: ticket.description ?? "",
+        priority: ticket.priority ?? "Medium",
+        type: ticket.type ?? "Permission Request",
+        assignTo: ticket.assignedTo?.name ?? "",
+        id: ticket?.details.id ?? "",
+        name: ticket?.details.name ?? "",
+        role: ticket?.details?.role ?? "",
+        status: ticket?.status ?? ""
+      });
+    }
+  }, [ticket]);
 
   const formSchema = z.object({
     title: z.string().min(1, "Title is Required"),
@@ -55,11 +56,12 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
     priority: z.enum(priorities),
     type: z.enum(types),
     assignTo: z.string().min(1, "Assign To is Required"),
-    roleId: z.string().optional(),
-    projectId: z.string().optional(),
-    flowId: z.string().optional()
+    role: z.string().optional(),
+    id: z.string().optional(),
+    name: z.string().optional(),
+    status: z.string().optional()
   }).superRefine((data, ctx) => {
-    if (data.type === "Permission Request" && !data.roleId) {
+    if (data.type === "Permission Request" && !data.role) {
       ctx.addIssue({
         path: ["roleId"],
         message: "Permission Type is Required",
@@ -67,7 +69,7 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
       })
     }
 
-    if (data.type === "Project Access Request" && !data.projectId) {
+    if (data.type === "Project Access Request" && !data.id) {
       ctx.addIssue({
         path: ["projectId"],
         message: "Project is Required",
@@ -75,7 +77,7 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
       });
     }
 
-    if (data.type === "Flow Review Request" && !data.flowId) {
+    if (data.type === "Flow Review Request" && !data.id) {
       ctx.addIssue({
         path: ["flowId"],
         message: "Flow is Required",
@@ -93,9 +95,10 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
       priority: ticket?.priority ?? "Medium",
       type: ticket?.type ?? "Permission Request",
       assignTo: ticket?.assignedTo.name ?? "",
-      projectId: "",
-      flowId: "",
-      roleId: ""
+      id: ticket?.details.id ?? "",
+      name: ticket?.details.name ?? "",
+      role: ticket?.details?.role ?? "",
+      status: ticket?.status ?? ""
     }
   });
 
@@ -103,10 +106,12 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
     form.reset();
     onOpenChange();
     const payload = {
+      id: ticket?.id,
       type: data.type,
       title: data.title,
       description: data.description,
       priority: data.priority,
+      status:data.status,
       createdBy: {
         id: "e056d755-eddd-4e9f-a85a-a33f66c8feab",
         name: "Dheeraj"
@@ -117,12 +122,16 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
       },
       details: {
         type: data.type,
-        projectId: data.projectId,
-        flowId: data.flowId,
-        roleId: data.roleId,
+        id: data.id,
+        name: data.name,
+        role: data.role,
       }
     }
-    await CRUDService.createTicket(payload);
+    if (mode === "Create") {
+      await CRUDService.createTicket(payload);
+    } else {
+      await CRUDService.updateTicket(payload);
+    }
   };
 
   const dynamicContent = () => {
@@ -130,7 +139,7 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
       case "Permission Request":
         return (
           <Controller
-            name="roleId"
+            name="role"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -142,8 +151,8 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="1">Flow Creator</SelectItem>
-                      <SelectItem value="2">Flow Executor</SelectItem>
+                      <SelectItem value="Flow Creator">Flow Creator</SelectItem>
+                      <SelectItem value="Flow Executor">Flow Executor</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -155,7 +164,7 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
       case "Project Access Request":
         return (
           <Controller
-            name="projectId"
+            name="id"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -169,7 +178,7 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
       case "Flow Review Request":
         return (
           <Controller
-            name="projectId"
+            name="id"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
@@ -189,7 +198,7 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Ticket</DialogTitle>
+          <DialogTitle>{mode} Ticket</DialogTitle>
           <DialogDescription>
             Fill ticket details here. Click save when you&apos;re done.
           </DialogDescription>
@@ -238,7 +247,7 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
               </Field>
             )}
           />
-          <Controller
+          {mode === "Create" && <Controller
             name="type"
             control={form.control}
             render={({ field, fieldState }) => (
@@ -259,7 +268,31 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
                 </Select>
               </Field>
             )}
-          />
+          />}
+          {mode === "Edit" && <Controller
+            name="status"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Type</FieldLabel>
+                <Select {...field} value={field.value}
+                  onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="New">New</SelectItem>
+                      <SelectItem value="Hold">Hold</SelectItem>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Complted">Complted</SelectItem>
+                      <SelectItem value="Rejected">Rejected</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+            )}
+          />}
           {dynamicContent()}
           <Controller
             name="assignTo"
@@ -274,8 +307,8 @@ export function TicketDialog({ open, onOpenChange, ticket }: ITicketDialog) {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectItem value="dheeraj">Dheeraj</SelectItem>
-                      <SelectItem value="john">John</SelectItem>
+                      <SelectItem value="Dheeraj">Dheeraj</SelectItem>
+                      <SelectItem value="John">John</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>

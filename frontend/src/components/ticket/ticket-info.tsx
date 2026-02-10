@@ -1,15 +1,5 @@
-import { DataTable } from "../shared/data-table/data-table";
 import { Header } from "../shared/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Input } from "../ui/input";
@@ -20,7 +10,7 @@ import { ITicket } from "./interfaces/ticket-interface";
 import { IconPencil } from "@tabler/icons-react";
 import { TicketDialog } from "./ticket-dialog";
 
-export function TicketInfo() {  
+export function TicketInfo() {
 
   const [open, setOpen] = useState<boolean>(false);
   const [ticket, setTicket] = useState<ITicket>();
@@ -67,6 +57,7 @@ export function TicketInfo() {
     if (!id) return;
     const res = await CRUDService.getTicketById(id);
     setTicket(res);
+    dynamicContent();
   }
 
   const postComment = () => {
@@ -106,6 +97,35 @@ export function TicketInfo() {
     return "just now";
   }
 
+  const dynamicContent = () => {
+    switch (ticket?.type) {
+      case "Permission Request":
+        return (
+          <div className="grid grid-cols-12">
+            <div className="md:col-span-5">Permission Type:</div>
+            <div className="md:col-span-7">{ticket?.details?.role}</div>
+          </div>
+        );
+      case "Project Access Request":
+      case "Flow Review Request":
+        return (
+          <div className="grid grid-cols-12">
+            <div className="md:col-span-5">Project:</div>
+            <div className="md:col-span-7">{ticket?.details?.name}</div>
+          </div>
+        )
+      case "Issue Report":
+        return (
+          <div className="grid grid-cols-12">
+            <div className="md:col-span-5">Session:</div>
+            <div className="md:col-span-7">{ticket?.details?.name}</div>
+          </div>
+        )
+      default:
+        break;
+    }
+  }
+
   return (
     <>
       <Header breadcrumbs={breadcrumbItems} />
@@ -118,7 +138,7 @@ export function TicketInfo() {
               <div className="grid gap-3">
                 <div className="text-sm text-gray-500 mb-1 font-bold flex justify-between">
                   Details
-                  <span className="text-xs flex gap-1 hover:text-primary cursor-pointer" onClick={()=>setOpen(true)}>
+                  <span className="text-xs flex gap-1 hover:text-primary cursor-pointer" onClick={() => setOpen(true)}>
                     <IconPencil size={15} />Edit
                   </span>
                 </div>
@@ -136,10 +156,7 @@ export function TicketInfo() {
                       <div className="md:col-span-4">Priority:</div>
                       <div className="md:col-span-8">{ticket?.priority}</div>
                     </div>
-                    <div className="grid grid-cols-12">
-                      <div className="md:col-span-5">Permission Type:</div>
-                      <div className="md:col-span-7">Flow Creator</div>
-                    </div>
+                    {dynamicContent()}
                   </div>
                 </div>
               </div>
@@ -289,7 +306,7 @@ export function TicketInfo() {
           </div>
         </div>
       </div>
-      <TicketDialog open={open} onOpenChange={() => setOpen(false)} ticket={ticket}/>
+      <TicketDialog open={open} onOpenChange={() => setOpen(false)} ticket={ticket} mode="Edit"/>
     </>
   );
 }

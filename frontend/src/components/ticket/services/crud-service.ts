@@ -27,4 +27,21 @@ export const CRUDService = {
     });
     return await res.json();
   },
+
+  deleteTicket:async(id:string)=>{
+    const res = await fetch(`${BASE_URL}/${id}`,{
+      headers:HEADERS,
+      method:"DELETE"
+    });
+    return await res.json();
+  },
+
+  updateTicket: async (payload: any) => {
+    const res = await fetch(BASE_URL, {
+      headers: HEADERS,
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+    return await res.json();
+  },  
 };

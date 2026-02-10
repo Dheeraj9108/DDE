@@ -13,7 +13,7 @@ interface Message {
   content: string;
   timestamp: Date;
   options?: string[];
-  inputType?: "text" | "select" | "boolean";
+  inputType?: "NUMBER" | "select" | "boolean";
 }
 
 interface ChatInputProps {
@@ -44,7 +44,7 @@ export function ChatInput({
   };
 
   // If there are options, don't show text input
-  if (message.options) {
+  if (message.options && message?.options.length != 0) {
     return null;
   }
 
@@ -52,7 +52,7 @@ export function ChatInput({
     <div className="p-5">
       <form onSubmit={handleSubmit} className="flex items-end space-x-2">
         <div className="flex-1">
-          {message.inputType === "text" && currentInput.length > 50 ? (
+          {message.inputType === "NUMBER" && currentInput.length > 50 ? (
             <Textarea
               value={currentInput}
               onChange={(e) => setCurrentInput(e.target.value)}

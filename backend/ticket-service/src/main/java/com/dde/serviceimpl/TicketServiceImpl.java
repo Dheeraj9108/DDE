@@ -9,7 +9,9 @@ import com.dde.dto.TicketInfoDTO;
 import com.dde.dto.TicketListDTO;
 import com.dde.dto.User;
 import com.dde.enums.TicketStatus;
+import com.dde.enums.TicketType;
 import com.dde.model.Ticket;
+import com.dde.model.TicketDetails;
 import com.dde.repository.TicketRepository;
 import com.dde.service.ITicketService;
 
@@ -20,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class TicketServiceImpl implements ITicketService{
 	
 	private final TicketRepository ticketRepo;
-
+	
 	@Override
 	public List<TicketListDTO> getAllTickets(UUID userId) {
 		return ticketRepo.findByUserId(userId);
@@ -51,11 +53,35 @@ public class TicketServiceImpl implements ITicketService{
 				.description(ticket.getDescription())
 				.assignedTo(new User(id,"Dheeraj"))
 				.createdBy(new User(id,"John"))
-				.details(ticket.getDetails())
+				.details(getTicketDetails(ticket.getType(),ticket.getDetails()))
 				.priority(ticket.getPriority())
 				.status(ticket.getStatus())
 				.type(ticket.getType())
 				.comments(ticket.getComments())
 				.build();
+	}
+	
+	private TicketDetails getTicketDetails(TicketType type, TicketDetails details) {
+		if(type == TicketType.PERMISSION_REQUEST) {
+		}
+		return details;
+	}
+	
+	@Override
+	public void deleteTicket(UUID id) {
+		ticketRepo.deleteById(id);
+	}
+	
+	@Override
+	public void update(TicketInfoDTO ticketDto) {
+		Ticket ticket = ticketRepo.findById(ticketDto.getId()).orElseThrow();
+		ticket.setType(ticketDto.getType());
+		ticket.setStatus(ticketDto.getStatus());
+		ticket.setPriority(ticketDto.getPriority());
+		ticket.setTitle(ticketDto.getTitle());
+		ticket.setDescription(ticketDto.getDescription());
+		ticket.setAssignedTo(ticketDto.getAssignedTo().getId());
+		ticket.setDetails(ticketDto.getDetails());
+		ticketRepo.save(ticket);
 	}
 }

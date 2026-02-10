@@ -75,7 +75,7 @@ export function TicketList() {
   }
 
   const handleDelete = async (row: TicketItem) => {
-
+    await CRUDService.deleteTicket(row.id); 
   };
 
   const actions: IActionItem[] = [
@@ -150,7 +150,7 @@ export function TicketList() {
             </Select>
           </div>
         </DataTable>
-        <TicketDialog open={open} onOpenChange={() => setOpen(false)} />
+        <TicketDialog open={open} onOpenChange={() => setOpen(false)} mode="Create"/>
       </div>
     </>
   );

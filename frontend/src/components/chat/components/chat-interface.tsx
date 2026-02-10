@@ -99,8 +99,7 @@ export function ChatInterface({ flowId, firstQuestion }: ChatInterfaceProps) {
   };
 
   const lastMessage = messages[messages.length - 1];
-  const showInput =
-    lastMessage?.type === "system" && lastMessage?.inputType === "text";
+  const showInput = lastMessage?.type === "system" && lastMessage?.inputType === "NUMBER";
 
   return (
     <div className="overflow-y-auto no-scrollbar flex flex-col">

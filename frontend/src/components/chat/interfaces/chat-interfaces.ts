@@ -4,7 +4,7 @@ export interface Message {
   content: string;
   timestamp: Date;
   options?: string[];
-  inputType?: "text" | "select" | "boolean";
+  inputType?: "NUMBER" | "select" | "boolean";
   sessionId?: string;
   flowId?: string;
   nodeId?: string;
