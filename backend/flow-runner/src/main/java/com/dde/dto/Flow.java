@@ -2,19 +2,15 @@ package com.dde.dto;
 
 import java.util.List;
 import java.util.UUID;
-
-import com.dde.enums.FlowStatus;
-
 import lombok.Data;
 
 @Data
-public class FlowResponseDTO {
-		
+public class Flow {
+	
 	private UUID id;
 	private String name;
 	private String description;
-	private FlowStatus status;
-	private List<NodeDTO> nodes;
-	private List<EdgeDTO> edges;
-	
+	private String status;
+	private List<Node> nodes;
+	private List<Edge> edges;
 }

@@ -226,7 +226,7 @@ public class FlowServiceImpl implements IFlowService {
 				.prompt(userResponse.getPrompt()).session(session).nodeId(userResponse.getNodeId()).build();
 		saveEvidences(sessionStep, session.getFlowId(), userResponse);
 		session.getSteps().add(sessionStep);
-		Node nextNode = getNextNode(session.getFlowId(), userResponse.getNodeId(), userResponse.getAnswer());
+		Node nextNode = getNextNode(session.getFlowId(), userResponse.getNodeId(), userResponse.getAnswer(), 0);
 		session.setCurrentNodeId(nextNode.getNodeId());
 		sessionRepo.save(session);
 		return getQuestion(session, nextNode);
@@ -272,9 +272,9 @@ public class FlowServiceImpl implements IFlowService {
 		}
 	}
 
-	private Node getNextNode(UUID flowId, String nodeId, String userAnswer) {
+	private Node getNextNode(UUID flowId, String nodeId, String userAnswer, int level) {
 
-		Optional<Edge> matchingEdge = getMatchingEdge(flowId, nodeId, userAnswer);
+		Optional<Edge> matchingEdge = getMatchingEdge(flowId, nodeId, userAnswer, level);
 
 		if (!matchingEdge.isPresent()) {
 			return null;
@@ -283,14 +283,15 @@ public class FlowServiceImpl implements IFlowService {
 		Edge edge = matchingEdge.get();
 		Node nextNode = nodeRepo.findByFlowIdAndId(flowId, edge.getTarget());
 		if (nextNode.getType().equals("resultNode")) {
-			return getNextNode(flowId, nextNode.getId(), userAnswer);
+			return getNextNode(flowId, nextNode.getId(), userAnswer, 1);
 		}
 		return nextNode;
 	}
 
-	private Optional<Edge> getMatchingEdge(UUID flowId, String nodeId, String userAnswer) {
+	private Optional<Edge> getMatchingEdge(UUID flowId, String nodeId, String userAnswer, int level) {
 		Node curNode = nodeRepo.findByFlowIdAndId(flowId, nodeId);
 		List<Edge> edges = edgeRepo.findByFlowIdAndSource(flowId, nodeId);
+		if(level == 1) return Optional.ofNullable(edges.get(0));
 		if (curNode.getType().equals("action")) {
 			return parseExpressions(edges, userAnswer, curNode);
 		}

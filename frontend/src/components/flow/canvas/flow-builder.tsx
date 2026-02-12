@@ -263,7 +263,7 @@ export function FlowBuilder() {
             target: newResultNodeId,
             style: { stroke: "#f97316", strokeWidth: 2 },
             data: {
-              condition: arr[i].label,
+              condition: arr[i]?.condition,
             },
           });
           newEdges.push({
@@ -272,7 +272,7 @@ export function FlowBuilder() {
             target: outputButtonId,
             style: { stroke: "#f97316", strokeWidth: 2 },
             data: {
-              condition: arr[i].label,
+              condition: arr[i]?.condition,
             },
           });
           return [...edges, ...newEdges];

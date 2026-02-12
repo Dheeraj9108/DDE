@@ -39,6 +39,7 @@ export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
         lop: "",
         rop2: "",
         rop2Value: "",
+        condition: ""
       },
     ],
   );
@@ -48,6 +49,7 @@ export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
     const updatedRangeList = ranges?.map((range) => ({
       ...range,
       label: `${label} ${range.rop1} ${range.rop1Value} ${range.lop} ${label} ${range.rop2} ${range.rop2Value}`,
+      condition: `#${label} ${range.rop1} ${range.rop1Value} ${range.lop} #${label} ${range.rop2} ${range.rop2Value}`
     }));
 
     if (updatedRangeList) {
@@ -58,6 +60,7 @@ export function ActionDialog({ open, onClose, mode, data, editContent }: any) {
         lop: "",
         rop2: "",
         rop2Value: "",
+        condition:"else"
       })
     }
 
