@@ -9,9 +9,10 @@ import com.dde.dto.NotificationEvent;
 @Service
 public class NotificationListener {
 
-	@RabbitListener(queues = RabbitMQConfig.QUEUE)
+//	@RabbitListener(queues = RabbitMQConfig.QUEUE)
 	public void handleEvents(NotificationEvent event) {
 		System.out.print("Notification Received");
 	}
 	
 }
+//hgaj jnoe isuf kgrx

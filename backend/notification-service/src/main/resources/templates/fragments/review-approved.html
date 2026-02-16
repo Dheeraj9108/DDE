@@ -1,0 +1,13 @@
+<div th:fragment="content">
+	<h2 style="color:#27ae60;">🎉 Submission Approved!</h2>
+
+	<p style="color:#555;">
+		Hello <span th:text="${name}">User</span>,
+	</p>
+
+	<p style="color:#555;">
+		Your submission
+		<strong th:text="${submissionTitle}">Submission Name</strong>
+		has been approved.
+	</p>
+</div>

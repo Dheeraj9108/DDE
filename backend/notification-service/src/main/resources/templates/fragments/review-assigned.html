@@ -1,0 +1,35 @@
+<div th:fragment="content">
+	<h2 style="color:#2c3e50;">New Review Assignment</h2>
+
+	<p style="color:#555;">
+		Hello <strong th:text="${reviewerName}">Reviewer</strong>,
+	</p>
+
+	<p style="color:#555;">
+		A new diagnostic flow has been submitted and requires your review.
+	</p>
+
+	<table width="100%" cellpadding="6" cellspacing="0" style="margin:15px 0; font-size:14px;">
+		<tr>
+			<td><strong>Submission Title:</strong></td>
+			<td th:text="${submissionTitle}">Flow Name</td>
+		</tr>
+		<tr>
+			<td><strong>Submitted By:</strong></td>
+			<td th:text="${submittedBy}">User Name</td>
+		</tr>
+		<tr>
+			<td><strong>Reference ID:</strong></td>
+			<td th:text="${submissionId}">GD-1023</td>
+		</tr>
+		<tr th:if="${dueDate != null}">
+			<td><strong>Review Due By:</strong></td>
+			<td th:text="${dueDate}">2026-02-20</td>
+		</tr>
+	</table>
+
+	<p style="color:#555;">
+		Please review the diagnostic flow for accuracy, completeness, and compliance with platform
+		standards.
+	</p>
+</div>
