@@ -1,6 +1,6 @@
 import { IProjectListItem } from "../interfaces/project";
 
-const BASE_URL: string = "http://localhost:8080/projects";
+const BASE_URL: string = "http://localhost:8085/projects";
 
 const HEADERS = { "Content-Type": "application/json" };
 

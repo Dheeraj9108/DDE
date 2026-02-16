@@ -1,6 +1,6 @@
 import { IFlowPayLoad } from "../interfaces/flow-interface";
 
-const BASE_URL: string = "http://localhost:8080/flows";
+const BASE_URL: string = "http://localhost:8085/flows";
 
 const HEADERS = { "Content-Type": "application/json" };
 

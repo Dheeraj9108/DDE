@@ -29,6 +29,7 @@ import com.dde.dto.FlowResponseDTO;
 import com.dde.dto.FlowTemplateDTO;
 import com.dde.dto.NodeDTO;
 import com.dde.dto.NodesWrapper;
+import com.dde.dto.NotificationEvent;
 import com.dde.dto.QuestionDTO;
 import com.dde.dto.ReviewRequestDTO;
 import com.dde.dto.StartDiagnosisDTO;
@@ -75,6 +76,9 @@ public class FlowServiceImpl implements IFlowService {
 
 	@Autowired
 	private CursorCodec codec;
+	
+	@Autowired
+	private EventPublisher eventPublisher;
 
 	@Override
 	public List<FlowListDTO> getFlows(UUID projectId) {
@@ -370,5 +374,9 @@ public class FlowServiceImpl implements IFlowService {
 		Flow flow = flowRepo.findById(reviewRequestDTO.getFlowId()).orElseThrow();
 		flow.setStatus(FlowStatus.SUBMITTED);
 		flowRepo.save(flow);
+		NotificationEvent event = new NotificationEvent();
+		event.setId(UUID.randomUUID());
+		event.setEmail("poojarydheeraj665@gmail.com");
+		eventPublisher.publishEvent(event);
 	}
 }
