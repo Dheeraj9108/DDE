@@ -17,6 +17,7 @@ import ProtectedRoute from "./ProtectedRoute.tsx";
 import PublicRoute from "./PublicRoute.tsx";
 import AuthProvider from "./AuthProvider.tsx";
 import Home from "./components/home/home.tsx";
+import { Join } from "./components/join/join.tsx";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
+      },
+      {
+        path: "/join",
+        element: <Join />,
       },
     ]
   },
