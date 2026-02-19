@@ -1,5 +1,6 @@
 server:
   port: 8081
+
 spring:
   application:
     name: Diagnostic Decision Engine API Gateway
@@ -8,25 +9,26 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOrigins: "http://localhost:5173"
             allowedMethods: "*"
             allowedHeaders: "*"
+      routes:
+        - id: auth-service-route
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+          filters:
+            - JwtAuthFilter
+        - id: user-service-route
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+          filters:
+            - JwtAuthFilter
 
-      server:
-        webflux:
-          routes:
-            - id: auth-service-route
-              uri: lb://auth-service
-              predicates:
-                - Path=/auth/**
-            - id: user-service-route
-              uri: lb://user-service
-              predicates:
-                - Path=/users/**
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka
-    

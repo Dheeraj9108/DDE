@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import ProfileDropdown from "./profile-dropdown";
 import { Moon, Search, Sun } from "lucide-react";
-import { useTheme } from "../theam-provider";
+import { useTheme } from "../util/theam-provider";
 
 export function Header(props: any) {
   const { theme, setTheme } = useTheme();

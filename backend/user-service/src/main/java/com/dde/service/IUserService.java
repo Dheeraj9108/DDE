@@ -5,7 +5,7 @@ import com.dde.model.User;
 
 public interface IUserService {
 	
-	User getUserByUsername(String username);
+	UserDTO   getUserByUsername(String username);
 	
 	void createUser(UserDTO user);
 }

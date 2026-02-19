@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom"
-import { ThemeProvider } from "./components/theam-provider";
+import { ThemeProvider } from "./components/util/theam-provider";
 
 const PublicLayout=()=>{
     return (

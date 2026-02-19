@@ -34,20 +34,21 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
       username:username?.current?.value ?? '',
       password:password?.current?.value ?? ''
     }
-    login({username:"Dheeraj"});
-    navigate("/dashboard");
-  //   try {
-  //     const res = await LoginApiService.login(payload);
-  //     const token = res.data;
-  //     localStorage.setItem("token",token);
-  //     if(res.success){
-  //       login({username:"Dheeraj"});
-  //       navigate("/dashboard");
-  //     }
-  //   } catch (error:any) {
-  //     setShowError(true);
-  //     setErrorMessage(error?.message);
-  //   }
+    // login({username:"Dheeraj"});
+    // navigate("/dashboard");
+    try {
+      const res = await LoginApiService.login(payload);
+      const token = res.data;
+      localStorage.setItem("token",token);
+      if(res.success){
+        const user = await LoginApiService.getUserDetails();
+        login(user);
+        navigate("/dashboard");
+      }
+    } catch (error:any) {
+      setShowError(true);
+      setErrorMessage(error?.message);
+    }
   }
 
   return (

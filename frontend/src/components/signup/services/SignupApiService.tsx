@@ -1,6 +1,6 @@
 import { ISignupUserInfo } from "../interfaces/signup-interface";
 
-const SIGNUP_URL = "http://localhost:8082/auth/signup";
+const SIGNUP_URL = "http://localhost:8081/auth/signup";
 
 const HEADERS = { "Content-Type": "application/json" };
 

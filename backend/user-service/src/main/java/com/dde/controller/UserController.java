@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,14 +20,13 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins="*")
 public class UserController {
 	
 	private final IUserService userService;
 	
 	@GetMapping("/{username}")
-	public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username){
-		User user = userService.getUserByUsername(username);
+	public ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String username){
+		UserDTO user = userService.getUserByUsername(username);
 		return ResponseEntity.ok(user);
 	}
 	
@@ -34,5 +34,11 @@ public class UserController {
 	public ResponseEntity<User> createUser(@RequestBody UserDTO user){
 		userService.createUser(user);
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
+	}
+	
+	@GetMapping("/me")
+	public ResponseEntity<UserDTO> getUserProfile(@RequestHeader("X-USER-NAME") String username){
+		UserDTO user = userService.getUserByUsername(username);
+		return ResponseEntity.ok(user);
 	}
 }
