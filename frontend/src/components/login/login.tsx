@@ -43,7 +43,12 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
       if(res.success){
         const user = await LoginApiService.getUserDetails();
         login(user);
-        navigate("/dashboard");
+        if(user?.groups?.length == 0) {
+          navigate('/join');
+        } else {
+          const group = user.groups[0];
+          navigate(`/group/${group.id}/dashboard`);
+        }
       }
     } catch (error:any) {
       setShowError(true);

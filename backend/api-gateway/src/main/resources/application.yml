@@ -19,11 +19,12 @@ spring:
             - Path=/auth/**
           filters:
             - JwtAuthFilter
-        - id: user-service-route
-          uri: lb://user-service
+        - id: iam-service-route
+          uri: lb://iam-service
           predicates:
-            - Path=/users/**
+            - Path=/iam/**
           filters:
+            - StripPrefix=1
             - JwtAuthFilter
 
 eureka:

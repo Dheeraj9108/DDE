@@ -7,3 +7,7 @@ export interface IGroup{
 export interface IUser{
     id:string
 }
+
+export interface IJoinGroup{
+    code :string;
+}

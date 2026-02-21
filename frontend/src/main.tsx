@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Projects } from "./components/project/projects.tsx";
-import { Dashboard } from "./components/dashbord.tsx";
+import { Dashboard } from "./components/dashboard/dashboard.tsx";
 import { Flow } from "./components/flow/flow-list/flow.tsx";
 import { Teams } from "./components/team/team.tsx";
 import { Canvas } from "./components/flow/canvas/canvas.tsx";
@@ -45,43 +45,43 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        path: "/dashboard",
+        path: "/group/:groupId/dashboard",
         element: <Dashboard />,
       },
       {
-        path: "/projects",
+        path: "/group/:groupId/projects",
         element: <Projects />,
       },
       {
-        path: "/projects/:projectId/flows",
+        path: "/group/:groupId/projects/:projectId/flows",
         element: <Flow />,
       },
       {
-        path: "/projects/:projectId/flows/:id",
+        path: "/group/:groupId/projects/:projectId/flows/:id",
         element: <Canvas />,
       },
       {
-        path: "/team",
+        path: "/group/:groupId/team",
         element: <Teams />,
       },
       {
-        path: "/tickets",
+        path: "/group/:groupId/tickets",
         element: <TicketList />,
       },
       {
-        path: "/tickets/:id/:mode",
+        path: "/group/:groupId/tickets/:id/:mode",
         element: <TicketInfo />,
       },
       {
-        path: "/flows",
+        path: "/group/:groupId/flows",
         element: <FlowList />,
       },
       {
-        path: "/flows/:id/diagnose",
+        path: "/group/:groupId/flows/:id/diagnose",
         element: <Chat />,
       },
       {
-        path: "/flows/:id/diagnose/:sessionId/summary",
+        path: "/group/:groupId/flows/:id/diagnose/:sessionId/summary",
         element: <DiagnosisSummary />,
       }
     ],

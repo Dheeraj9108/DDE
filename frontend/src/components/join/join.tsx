@@ -13,23 +13,47 @@ import { useNavigate } from "react-router-dom";
 import { IGroup } from "./interfaces/interfaces";
 import { CRUDService } from "./services/crud-service";
 import { useState } from "react";
+import { useAuth } from "@/AuthProvider";
+import { toast } from "sonner";
 
 export function Join() {
 
     const navigate = useNavigate();
-    const [name,setName] = useState("");
+    const [name, setName] = useState("");
+    const [code, setCode] = useState("");
+    const { user } = useAuth();
 
     const createGroup = async () => {
+        if (!user) {
+            toast.error('Please Login');
+            return;
+        }
         try {
             const payload: IGroup = {
                 id: "",
                 name,
                 owner: {
-                    id: "b47cf4c2-ba9a-4628-8eb8-89ae4285fd62"
+                    id: user.id
                 }
             }
-            await CRUDService.createGroup(payload);
-            navigate("/dashboard");
+            const group = await CRUDService.createGroup(payload);
+            navigate(`/group/${group?.id}/dashboard`);
+        } catch (error) {
+
+        }
+    }
+
+    const joiGroup = async () => {
+        if (!user) {
+            toast.error('Please Login');
+            return;
+        }
+        try {
+            const payload = {
+                code,
+            }
+            const group = await CRUDService.joinGroup(payload);
+            navigate(`/group/${group?.id}/dashboard`);
         } catch (error) {
 
         }
@@ -56,8 +80,8 @@ export function Join() {
                     <Tabs defaultValue="createGroup" className="w-xs my-5">
                         <div className="w-full flex justify-center">
                             <TabsList variant="line">
-                                <TabsTrigger value="createGroup" className="after:bg-primary">Create Group</TabsTrigger>
-                                <TabsTrigger value="joinGroup" className="after:bg-primary">Join Group</TabsTrigger>
+                                <TabsTrigger value="createGroup" className="">Create Group</TabsTrigger>
+                                <TabsTrigger value="joinGroup" className="">Join Group</TabsTrigger>
                             </TabsList>
                         </div>
                         <TabsContent value="createGroup" className="my-5">
@@ -69,7 +93,7 @@ export function Join() {
                                         type="text"
                                         required
                                         placeholder="Name"
-                                        onChange={(e)=>setName(e?.target?.value)}
+                                        onChange={(e) => setName(e?.target?.value)}
                                     />
                                 </Field>
                                 <Field>
@@ -86,10 +110,11 @@ export function Join() {
                                         type="text"
                                         required
                                         placeholder="Code"
+                                        onChange={(e) => setCode(e?.target?.value)}
                                     />
                                 </Field>
                                 <Field>
-                                    <Button className="">Join</Button>
+                                    <Button onClick={joiGroup}>Join</Button>
                                 </Field>
                             </FieldGroup>
                         </TabsContent>

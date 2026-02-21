@@ -16,10 +16,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { ISignupUserInfo } from "./interfaces/signup-interface";
 import { SignupApiService } from "./services/SignupApiService";
+import { useNavigate } from "react-router-dom";
 
 export function Signup({ className, ...props }: React.ComponentProps<"div">) {
   const username = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState<any>();
 
@@ -32,6 +34,7 @@ export function Signup({ className, ...props }: React.ComponentProps<"div">) {
     try {
       const res = await SignupApiService.signup(payload);
       console.log(res);
+      navigate('/login');
     } catch (error: any) {
       setShowError(true);
       setErrorMessage(error?.message);

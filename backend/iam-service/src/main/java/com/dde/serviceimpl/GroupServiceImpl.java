@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.dde.dto.GroupDTO;
+import com.dde.dto.JoinGroup;
 import com.dde.dto.UserDTO;
 import com.dde.model.Group;
 import com.dde.model.User;
@@ -71,5 +72,21 @@ public class GroupServiceImpl implements IGroupService {
 		groupDTO.setCreatedAt(group.getCreatedAt());
 		groupDTO.setName(group.getName());
 		return groupDTO;
+	}
+
+	@Override
+	@Transactional
+	public GroupDTO joinGroup(JoinGroup joinGroupDTO,String username) {
+		User user = userRepo.findByUsername(username).orElseThrow();
+		Group group = groupRepo.findByInviteCode(joinGroupDTO.getCode()); 
+		user.getGroups().add(group);
+		
+		GroupDTO savedGroup = new GroupDTO();
+		savedGroup.setId(group.getId());
+		savedGroup.setDescription(group.getDescription());
+		savedGroup.setName(group.getName());
+		savedGroup.setInviteCode(group.getInviteCode());
+		savedGroup.setCreatedAt(group.getCreatedAt());
+		return savedGroup;
 	}
 }
