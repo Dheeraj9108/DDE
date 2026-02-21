@@ -10,5 +10,6 @@ public class ProjectRequestDTO {
 	private UUID id;
 	private String name;
 	private String description;
+	private String groupId;
 	private LocalDateTime createdAt;
 }

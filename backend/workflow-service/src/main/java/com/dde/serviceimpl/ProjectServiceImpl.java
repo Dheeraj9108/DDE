@@ -23,8 +23,8 @@ public class ProjectServiceImpl implements IProjectService {
 	private DtoModelMapper dtoMapper;
 
 	@Override
-	public List<ProjectListDTO> getAllProjects() {
-		return dtoMapper.toProjectDTOs(projectRepo.findAll());
+	public List<ProjectListDTO> getAllProjects(UUID groupId) {
+		return dtoMapper.toProjectDTOs(projectRepo.findByGroupId(groupId));
 	}
 
 	@Override

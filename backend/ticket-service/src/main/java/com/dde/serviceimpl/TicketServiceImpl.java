@@ -40,6 +40,7 @@ public class TicketServiceImpl implements ITicketService{
 		ticket.setDescription(ticketDto.getDescription());
 		ticket.setType(ticketDto.getType());
 		ticket.setDetails(ticketDto.getDetails());
+		ticket.setGroupId(ticketDto.getGroupId());
 		ticketRepo.save(ticket);
 	}
 	

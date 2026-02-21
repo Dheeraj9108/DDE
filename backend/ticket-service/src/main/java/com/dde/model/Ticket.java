@@ -51,6 +51,9 @@ public class Ticket {
 	@Enumerated(EnumType.STRING)
 	private TicketType type;
 	
+	@Column(nullable=false)
+	private UUID groupId;
+	
 	@Enumerated(EnumType.STRING)
 	private TicketStatus status;
 	

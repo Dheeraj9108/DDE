@@ -21,7 +21,7 @@ import { ResultNode } from "./nodes/action/resultNode";
 import dagre from "@dagrejs/dagre";
 import { EndNode } from "./nodes/end/end-node";
 import { Button } from "@/components/ui/button";
-import { CRUDService } from "@/components/flow/services/crudService";
+import { apiService } from "@/components/flow/services/crudService";
 import { NodeSearch } from "@/components/node-search";
 import { Search, X } from "lucide-react";
 import { useParams } from "react-router-dom";
@@ -110,7 +110,7 @@ export function FlowBuilder() {
 
   const getFlowById = async () => {
     try {
-      const res: IFlow = await CRUDService.getFlowById(id ?? "");
+      const res: IFlow = await apiService.getFlowById(id ?? "");
       const newNodes = res?.nodes?.map((node: Node) => {
         let newNode = {
           ...node,
@@ -538,13 +538,13 @@ export function FlowBuilder() {
       .current!.setCurrentFlow({ id: id ?? "", nodes, edges })
       .build();
     try {
-      await CRUDService.updateFlow(payload);
+      await apiService.updateFlow(payload);
       toast.success(CONST.UPDATE_SUCCESS);
     } catch (error) { }
   };
 
   const startReview = () => {
-    const res = CRUDService.startReview(id || "");
+    const res = apiService.startReview(id || "");
 
   }
 
@@ -634,162 +634,3 @@ export function FlowBuilder() {
     </>
   );
 }
-
-// -----------------
-
-// Action Node
-
-// const outputButtonNode: Node = {
-//   id: outputButtonId,
-//   type: "addButton",
-//   position: { x: 0, y: 0 },
-//   data: { onAdd: null },
-//   // sourcePosition: Position.Bottom,
-//   // targetPosition: Position.Top,
-// };
-
-// const resultNode: Node = {
-//   id: resultNodeId,
-//   type: "resultNode",
-//   position: { x: 0, y: 0 },
-//   data: { label: "Result" },
-//   // sourcePosition: Position.Bottom,
-//   // targetPosition: Position.Top,
-// };
-
-// -----------------
-
-// const initialNodes: Node[] = [
-//   {
-//     id: "1",
-//     type: "startNode",
-//     position: { x: 0, y: 0 },
-//     data: { label: "Start" },
-//   },
-//   {
-//     id: "2",
-//     type: "addButton",
-//     position: { x: 0, y: 0 },
-//     data: { onAdd: null },
-//   },
-// ];
-
-// const initialEdges: Edge[] = [
-//   {
-//     id: "e1-2",
-//     source: "1",
-//     target: "2",
-//     style: { stroke: "#6366f1", strokeWidth: 2 },
-//   },
-// ];
-
-// -----------------
-
-// const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-//   initialNodes,
-//   initialEdges
-// );
-// const [nodes, setNodes, onNodesChange] = useNodesState(
-//   layoutedNodes as Node[]
-// );
-// const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
-
-// -----------------
-
-// useEffect(() => {
-//   // Check if a new node has been added
-//   if (nodes.length > initialNodes.length) {
-//     const { nodes: layoutedNodes, edges: layoutedEdges } =
-//       getLayoutedElements(nodes, edges);
-//     setNodes([...layoutedNodes]);
-//     setEdges([...layoutedEdges]);
-//   }
-// }, [nodes.length]);
-
-// -----------------
-
-// const layout = useCallback(() => {
-//   const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes,edges);
-//   setNodes([...layoutedNodes]);
-//   setEdges([...layoutedEdges]);
-// }, [nodes,edges]);
-
-// -----------------
-
-// useEffect(() => {
-//   setNodes((nds) =>
-//     nds.map((node) => {
-//       if (node.id === "2" && node.type === "addButton") {
-//         return {
-//           ...node,
-//           data: {
-//             ...node.data,
-//             onAdd: (type: "conditional" | "action" | "end") =>
-//               addNode("2", type),
-//           },
-//         };
-//       }
-//       return node;
-//     })
-//   );
-// }, []);
-
-// -----------------
-
-{
-  /* <button onClick={layoutGraph}>Auto Layout</button> */
-}
-
-// {
-//   nodes: [
-//     {
-//       id: "1",
-//       type: "nodeType",
-//       data: {
-//         label: "label",
-//         description: "",
-//         // dependes on different types of node different properties may come
-//         // if action node
-//         dropdownvalue: "",
-//         // if drop down value option
-//         options: ["op1", "op2"],
-//         // if dropdown option range
-//         ranges: [
-//           {
-//             label: "if",
-//             rop1: "",
-//             rop1Value: "",
-//             lop: "",
-//             rop2: "",
-//             rop2Value: "",
-//           },
-//           {
-//             label: "else if",
-//             rop1: "",
-//             rop1Value: "",
-//             lop: "",
-//             rop2: "",
-//             rop2Value: "",
-//           },
-//         ],
-//         // so on
-//       },
-//     },
-//   ];
-//   edges: [
-//     {
-//       id: "e1-2",
-//       source: "1",
-//       target: "2",
-//       style: { stroke: "#6366f1", strokeWidth: 2 },
-//     },
-//   ];
-// }
-
-// yesButtonNode.data.onAdd = (type: "conditional" | "action" | "end") => {
-//   addNode(yesButtonId, type);
-// };
-
-// noButtonNode.data.onAdd = (type: "conditional" | "action" | "end") => {
-//   addNode(noButtonId, type);
-// };

@@ -2,7 +2,7 @@ import { Header } from "../shared/header";
 import { DataTable } from "../shared/data-table/data-table";
 import { useEffect, useState } from "react";
 import { IProjectListItem } from "./interfaces/project";
-import { CRUDService } from "./services/crudService";
+import { apiService } from "./services/apiService";
 import { toast } from "sonner";
 import * as CONST from "./constants";
 import * as URL_CONST from "../shared/constants/urlConstants";
@@ -10,10 +10,12 @@ import { generateColumns } from "../shared/columns";
 import { IActionItem } from "../shared/interfaces/interfaces";
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/AuthProvider";
 
 export function Projects() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<IProjectListItem[]>([]);
+  const {user} = useAuth();
   let breadcrumbItems: any = [];
 
   useEffect(() => {
@@ -36,19 +38,22 @@ export function Projects() {
 
   const fetchProjects = async () => {
     try {
-      const res = await CRUDService.getAllProjects();
+      const res = await apiService.getAllProjects(user?.groups?.[0].id);
       setProjects(res);
-    } catch (error) { }
+    } catch (error) { 
+
+    }
   };
 
   const createProject = async (data: IProjectListItem) => {
-    await CRUDService.createProject(data);
+    data.groupId = user.groups?.[0].id;
+    await apiService.createProject(data);
     toast.success(CONST.CREATE_SUCCESS);
     fetchProjects();
   };
 
   const handleDelete = async (id: string) => {
-    await CRUDService.deleteProject(id);
+    await apiService.deleteProject(id);
     toast.success(CONST.DELETE_SUCCESS);
     fetchProjects();
   };

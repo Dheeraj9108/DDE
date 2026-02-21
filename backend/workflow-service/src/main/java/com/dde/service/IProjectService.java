@@ -8,7 +8,7 @@ import com.dde.dto.ProjectRequestDTO;
 
 public interface IProjectService {
 	
-	List<ProjectListDTO> getAllProjects();
+	List<ProjectListDTO> getAllProjects(UUID groupId);
 	
 	void createProject(ProjectRequestDTO projectDTO);
 	

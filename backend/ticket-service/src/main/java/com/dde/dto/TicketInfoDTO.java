@@ -30,5 +30,6 @@ public class TicketInfoDTO {
 	private User createdBy;
 	private User assignedTo;
 	private TicketDetails details;
+	private UUID groupId;
 	private List<Comment> comments;
 }

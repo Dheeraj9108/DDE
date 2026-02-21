@@ -1,7 +1,7 @@
 import { DataTable } from "../../shared/data-table/data-table";
 import { Header } from "../../shared/header";
 import { useEffect, useState } from "react";
-import { CRUDService } from "../services/crudService";
+import { apiService } from "../services/crudService";
 import { toast } from "sonner";
 import { IFlowListItem } from "../interfaces/flow-interface";
 import { useNavigate, useParams } from "react-router-dom";
@@ -52,7 +52,7 @@ export function Flow() {
   };
 
   const handleDelete = async (row: IFlowListItem) => {
-    await CRUDService.deleteFlow(row.id);
+    await apiService.deleteFlow(row.id);
     toast.success("Flow deleted Successfully");
     fetchFlows();
   };
@@ -101,18 +101,18 @@ export function Flow() {
       description: data.description,
       projectId
     }
-    await CRUDService.createFlow(payload);
+    await apiService.createFlow(payload);
     toast.success("Flow created Successfully");
     fetchFlows();
   };
 
   const fetchFlows = async () => {
-    const data: IFlowListItem[] = await CRUDService.getAllFlows(projectId!);
+    const data: IFlowListItem[] = await apiService.getAllFlows(projectId!);
     setFlows(data);
   };
 
   const requestReview = async (payload: any) => {
-    await CRUDService.requestReview(payload);
+    await apiService.requestReview(payload);
     toast.success("Review Requested");
     fetchFlows();
   }

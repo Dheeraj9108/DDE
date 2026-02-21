@@ -1,10 +1,11 @@
+import api from "@/components/util/api";
 import { IFlowPayLoad } from "../interfaces/flow-interface";
 
-const BASE_URL: string = "http://localhost:8085/flows";
+const BASE_URL: string = "/api/workflow/flows";
 
 const HEADERS = { "Content-Type": "application/json" };
 
-export const CRUDService = {
+export const apiService = {
   getAllFlows: async (projectId: string) => {
     try {
       const res = await fetch(`${BASE_URL}?projectId=${projectId}`, {
@@ -54,15 +55,17 @@ export const CRUDService = {
   },
 
   getFlowById: async (id: string) => {
-    try {
-      const res = await fetch(`${BASE_URL}/${id}`, {
-        method: "GET",
-        headers: HEADERS,
-      });
-      return await res.json();
-    } catch (error) {
-      throw error;
-    }
+    const res = await api.get(`/api/workflow/flows/${id}`);
+    return res.data;
+    // try {
+    //   const res = await fetch(`${BASE_URL}/${id}`, {
+    //     method: "GET",
+    //     headers: HEADERS,
+    //   });
+    //   return await res.json();
+    // } catch (error) {
+    //   throw error;
+    // }
   },
 
   startReview: async (id: string) => {
