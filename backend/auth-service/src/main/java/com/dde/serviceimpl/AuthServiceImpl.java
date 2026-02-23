@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.dde.dto.LoginRequestDTO;
 import com.dde.dto.SignupRequestDTO;
 import com.dde.feign.UserServiceFeignClient;
+import com.dde.model.AuthUserDetails;
 import com.dde.service.IAuthService;
 import com.dde.service.IJwtService;
 
@@ -33,7 +34,8 @@ public class AuthServiceImpl implements IAuthService{
 		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getUsername(), loginRequestDTO.getPassword()));
 				
 		if(authentication.isAuthenticated()) {
-			token = jwtService.generateToken(loginRequestDTO.getUsername());
+			AuthUserDetails user = (AuthUserDetails) authentication.getPrincipal();
+			token = jwtService.generateToken(user);
 		} else {
 			throw new UsernameNotFoundException("Username Not Found");
 		}

@@ -3,6 +3,7 @@ package com.dde.service;
 import java.util.List;
 import java.util.UUID;
 
+import com.dde.dto.AddCollaboratorsDTO;
 import com.dde.dto.ProjectListDTO;
 import com.dde.dto.ProjectRequestDTO;
 
@@ -15,4 +16,6 @@ public interface IProjectService {
 	void updateProject(ProjectRequestDTO projectDTO);
 	
 	void deleteProject(UUID id);
+	
+	void addCollaborators(AddCollaboratorsDTO collaboratorsDTO);
 }

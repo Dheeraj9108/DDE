@@ -59,7 +59,7 @@ export function Projects() {
   };
 
   const handleView = (row: IProjectListItem) => {
-    navigate(`/projects/${row.id}/flows`);
+    navigate(`/group/${user?.groups?.[0].id}/projects/${row.id}/flows`);
   }
 
   const actions: IActionItem[] = [

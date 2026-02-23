@@ -6,12 +6,16 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dde.dto.AddCollaboratorsDTO;
 import com.dde.dto.ProjectListDTO;
 import com.dde.dto.ProjectRequestDTO;
 import com.dde.model.Project;
+import com.dde.model.ProjectCollaborator;
 import com.dde.repository.ProjectRepository;
 import com.dde.service.IProjectService;
 import com.dde.util.DtoModelMapper;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ProjectServiceImpl implements IProjectService {
@@ -42,5 +46,19 @@ public class ProjectServiceImpl implements IProjectService {
 	@Override
 	public void deleteProject(UUID id) {
 		projectRepo.deleteById(id);
+	}
+	
+	@Override
+	@Transactional
+	public void addCollaborators(AddCollaboratorsDTO collaboratorsDTO) {
+		Project project = projectRepo.findById(collaboratorsDTO.getProjectId()).orElseThrow();
+		
+		collaboratorsDTO.getCollaborators().forEach(member->{
+			ProjectCollaborator collaborator = new ProjectCollaborator();
+			collaborator.setProject(project);
+			collaborator.setUserId(member.getId());
+			collaborator.setRoles(member.getRoles());
+			project.getCollaborators().add(collaborator);
+		});
 	}
 }

@@ -100,3 +100,14 @@ export interface INodeAction {
   icon: ReactNode;
   onClick: () => void;
 }
+
+export interface IUser {
+  username:string;
+  email:string;
+}
+
+export interface ICollaborator {
+  name: string;
+  email: string;
+  isReviewer: boolean;
+}

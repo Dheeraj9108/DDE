@@ -36,8 +36,8 @@ public class UserController {
 	}
 	
 	@GetMapping("/me")
-	public ResponseEntity<UserDTO> getUserProfile(@RequestHeader("X-USER-NAME") String username){
-		UserDTO user = userService.getUserByUsername(username);
+	public ResponseEntity<UserDTO> getUserProfile(@RequestHeader("X-USER-INFO") String userContextObj){
+		UserDTO user = userService.getUserProfile(userContextObj);
 		return ResponseEntity.ok(user);
 	}
 }

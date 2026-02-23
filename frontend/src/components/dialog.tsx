@@ -1,3 +1,4 @@
+import { useAuth } from "@/AuthProvider";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,12 +18,13 @@ import { useRef } from "react";
 export function DialogDemo({onCreate}:{ onCreate: (data: any) => void }) {
   const nameRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLInputElement>(null);
+  const {user} = useAuth();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const name = nameRef.current?.value;
     const description = descriptionRef.current?.value;
-    onCreate({ name, description });
+    onCreate({ name, description, createdBy: user?.id });
   };
 
   return (

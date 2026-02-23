@@ -1,5 +1,7 @@
 package com.dde.filter;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -9,8 +11,11 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.dde.dto.UserContextDTO;
 import com.dde.service.JwtService;
 import com.dde.validator.RouteValidator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Claims;
 import jakarta.ws.rs.core.HttpHeaders;
@@ -54,9 +59,10 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
 				
 				try {
 					Claims claims = jwtService.validateToken(token);
+					String userInfo = getUserContextObject(claims);
 					ServerHttpRequest mutatedRequest = exchange.getRequest()
 					        .mutate() // modified copy of the request
-					        .header("X-USER-NAME",claims.getSubject() )
+					        .header("X-USER-INFO",userInfo)
 					        .build();
 					return chain.filter(exchange.mutate().request(mutatedRequest).build());
 				} catch (Exception e) {
@@ -66,6 +72,22 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
 			
 			return chain.filter(exchange);
 		};
+	}
+	
+	private String getUserContextObject(Claims claims) {
+		UserContextDTO user = new UserContextDTO();
+		user.setId(UUID.fromString(claims.get("id", String.class)));
+		user.setUsername(claims.getSubject());
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String userJson = "";
+		try {
+			userJson = mapper.writeValueAsString(user);
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return userJson;
 	}
 	
 	private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus){

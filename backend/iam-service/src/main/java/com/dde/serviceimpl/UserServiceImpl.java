@@ -7,41 +7,61 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.dde.dto.GroupDTO;
+import com.dde.dto.UserContextDTO;
 import com.dde.dto.UserDTO;
 import com.dde.exception.UserNotFoundException;
 import com.dde.model.User;
 import com.dde.repository.UserRepository;
 import com.dde.service.IUserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements IUserService{
-		
+public class UserServiceImpl implements IUserService {
+
 	private final UserRepository userRepository;
-	
+
 	@Override
 	public UserDTO getUserByUsername(String username) {
-		User user = userRepository.findByUsername(username)
-				.orElseThrow(()->new UserNotFoundException(username));
 		UserDTO userDTO = new UserDTO();
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new UserNotFoundException(username));
 		userDTO.setId(user.getId());
 		userDTO.setUsername(user.getUsername());
-		userDTO.setGroups(getGroups(user));
 		userDTO.setPassword(user.getPassword());
+		userDTO.setGroups(getGroups(user));
 		return userDTO;
 	}
-	
-	private List<GroupDTO> getGroups(User user){
-		return user.getGroups().stream().map((group)->{
+
+	@Override
+	public UserDTO getUserProfile(String userContextObj) {
+		UserDTO userDTO = new UserDTO();
+		try {
+			UserContextDTO userContext = new ObjectMapper().readValue(userContextObj, UserContextDTO.class);
+			User user = userRepository.findByUsername(userContext.getUsername())
+					.orElseThrow(() -> new UserNotFoundException(userContext.getUsername()));
+			userDTO.setId(user.getId());
+			userDTO.setUsername(user.getUsername());
+			userDTO.setPassword(user.getPassword());
+			userDTO.setGroups(getGroups(user));
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return userDTO;
+	}
+
+	private List<GroupDTO> getGroups(User user) {
+		return user.getGroups().stream().map((group) -> {
 			GroupDTO groupDTO = new GroupDTO();
 			groupDTO.setId(group.getId());
 			groupDTO.setName(group.getName());
 			return groupDTO;
 		}).collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public void createUser(UserDTO userDto) {
 		User user = new User();

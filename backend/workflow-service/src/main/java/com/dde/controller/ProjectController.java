@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dde.dto.AddCollaboratorsDTO;
 import com.dde.dto.ProjectListDTO;
 import com.dde.dto.ProjectRequestDTO;
 import com.dde.service.IProjectService;
@@ -50,4 +51,9 @@ public class ProjectController {
 		return new ResponseEntity<>("Flow Deleted Successfully",HttpStatus.OK);
 	}
 	
+	@PostMapping("/addCollaborators")
+	public ResponseEntity<String> addCollaborator(@RequestBody AddCollaboratorsDTO collaboratorsDTO){
+		projectService.addCollaborators(collaboratorsDTO);
+		return ResponseEntity.ok("Collaborators Updated Successfully");
+	}
 }

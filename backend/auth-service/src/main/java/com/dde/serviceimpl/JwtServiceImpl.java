@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.dde.model.AuthUserDetails;
 import com.dde.service.IJwtService;
 
 import io.jsonwebtoken.Jwts;
@@ -44,11 +45,9 @@ public class JwtServiceImpl implements IJwtService {
 	}
 	
 	@Override
-	public String generateToken(String username) {
+	public String generateToken(AuthUserDetails user) {
 		Map<String, Object> claims = new HashMap<>();
-		return createToken(claims, username);
+		claims.put("id", user.getId());
+		return createToken(claims, user.getUsername());
 	}
-
-	
-
 }

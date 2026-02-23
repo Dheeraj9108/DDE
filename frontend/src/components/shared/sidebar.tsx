@@ -21,7 +21,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const { user } = useAuth();
 
-  if(!user) return;
+  // if(!user) return;
 
   const data = {
     user: {
