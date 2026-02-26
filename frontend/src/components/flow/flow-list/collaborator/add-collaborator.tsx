@@ -15,34 +15,41 @@ import {
     ItemContent,
     ItemDescription,
     ItemGroup,
-    ItemMedia,
     ItemTitle,
 } from "@/components/ui/item";
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupInput,
+} from "@/components/ui/input-group";
 import { IconPlus } from "@tabler/icons-react";
-import { PlusIcon, X } from "lucide-react";
+import { PlusIcon, SearchIcon, X } from "lucide-react";
 import { useState } from "react";
 import { IUser } from "../../interfaces/flow-interface";
 
-export default function AddCollaborator({ open, onOpenChange }: any) {
+export default function AddCollaborator({ addUsers }: any) {
 
-    const people:IUser[] = [
+    const [users, setUsers] = useState<IUser[]>([
         {
+            id: "1",
             username: "shadcn",
             email: "shadcn@vercel.com",
         },
         {
+            id: "2",
             username: "maxleiter",
             email: "maxleiter@vercel.com",
         },
         {
+            id: "3",
             username: "evilrabbit",
             email: "evilrabbit@vercel.com",
         },
-    ];
-
+    ]);
     const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
 
-    const addUser = (user: any) => {
+    const selectUser = (user: IUser) => {
+        setUsers((prev) => prev.filter(prevUser => prevUser.id !== user.id));
         setSelectedUsers((prev: any) => [...prev, user]);
     }
 
@@ -51,18 +58,40 @@ export default function AddCollaborator({ open, onOpenChange }: any) {
     }
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog>
             <DialogTrigger asChild>
                 <Button className="ml-2"><IconPlus />Add User</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] sm:max-h-[525px]">
+            <DialogContent className="sm:max-w-[525px] sm:max-h-[625px]">
                 <DialogHeader>
                     <DialogTitle>Add Collaborators</DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-wrap">
+                <InputGroup>
+                    <InputGroupInput placeholder="Search..." />
+                    <InputGroupAddon>
+                        <SearchIcon />
+                    </InputGroupAddon>
+                </InputGroup>
+
+                <ItemGroup className="max-w-lg max-h-[50vh] overflow-y-auto gap-4">
+                    {users.map((user, index) => (
+                        <Item key={user?.id} variant="outline">
+                            <ItemContent className="gap-1">
+                                <ItemTitle>{user?.username}</ItemTitle>
+                                <ItemDescription>{user?.email}</ItemDescription>
+                            </ItemContent>
+                            <ItemActions>
+                                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => selectUser(user)}>
+                                    <PlusIcon />
+                                </Button>
+                            </ItemActions>
+                        </Item>
+                    ))}
+                </ItemGroup>
+                <div className="flex flex-wrap overflow-auto max-h-16">
                     <div>Selected Users :</div>
                     {
-                        selectedUsers?.map((user:any,idx:number) => (
+                        selectedUsers?.map((user: any, idx: number) => (
                             <Badge key={idx} variant="secondary" className="flex items-center gap-1">
                                 {user.username}
                                 <button
@@ -76,26 +105,13 @@ export default function AddCollaborator({ open, onOpenChange }: any) {
                         ))
                     }
                 </div>
-                <ItemGroup className="max-w-sm gap-4">
-                    {people.map((person, index) => (
-                        <Item key={person.username} variant="outline">
-                            <ItemContent className="gap-1">
-                                <ItemTitle>{person.username}</ItemTitle>
-                                <ItemDescription>{person.email}</ItemDescription>
-                            </ItemContent>
-                            <ItemActions>
-                                <Button variant="ghost" size="icon" className="rounded-full" onClick={() => addUser(person)}>
-                                    <PlusIcon />
-                                </Button>
-                            </ItemActions>
-                        </Item>
-                    ))}
-                </ItemGroup>
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="outline">Cancel</Button>
                     </DialogClose>
-                    <Button type="submit" >Add</Button>
+                    <DialogClose asChild>
+                        <Button type="submit" onClick={() => addUsers(selectedUsers)}>Add</Button>
+                    </DialogClose>
                 </DialogFooter>
             </DialogContent>
         </Dialog >

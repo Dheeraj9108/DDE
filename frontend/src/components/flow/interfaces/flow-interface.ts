@@ -102,11 +102,13 @@ export interface INodeAction {
 }
 
 export interface IUser {
+  id:string;
   username:string;
   email:string;
 }
 
 export interface ICollaborator {
+  id:string;
   name: string;
   email: string;
   isReviewer: boolean;
