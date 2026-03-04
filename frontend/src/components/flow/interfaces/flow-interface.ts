@@ -109,7 +109,9 @@ export interface IUser {
 
 export interface ICollaborator {
   id:string;
+  userId:string;
   name: string;
   email: string;
-  isReviewer: boolean;
+  reviewer: boolean;
+  roles: string[];
 }

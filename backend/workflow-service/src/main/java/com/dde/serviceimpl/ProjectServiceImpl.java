@@ -1,19 +1,29 @@
 package com.dde.serviceimpl;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dde.dto.AddCollaboratorsDTO;
+import com.dde.dto.ManageCollaboratorsDTO;
+import com.dde.dto.ProjectDTO;
 import com.dde.dto.ProjectListDTO;
-import com.dde.dto.ProjectRequestDTO;
+import com.dde.dto.UserContextDTO;
+import com.dde.dto.UserDTO;
+import com.dde.enums.ProjectRole;
+import com.dde.feign.IAMServiceFeignClient;
 import com.dde.model.Project;
 import com.dde.model.ProjectCollaborator;
 import com.dde.repository.ProjectRepository;
 import com.dde.service.IProjectService;
 import com.dde.util.DtoModelMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.transaction.Transactional;
 
@@ -25,6 +35,9 @@ public class ProjectServiceImpl implements IProjectService {
 
 	@Autowired
 	private DtoModelMapper dtoMapper;
+	
+	@Autowired
+	private IAMServiceFeignClient iamClient;
 
 	@Override
 	public List<ProjectListDTO> getAllProjects(UUID groupId) {
@@ -32,13 +45,24 @@ public class ProjectServiceImpl implements IProjectService {
 	}
 
 	@Override
-	public void createProject(ProjectRequestDTO projectDTO) {
-		Project project = dtoMapper.toProjectModel(projectDTO);		
-		projectRepo.save(project);
+	public void createProject(ProjectDTO projectDTO, String userContextObj) {
+		try {
+			UserContextDTO userContext = new ObjectMapper().readValue(userContextObj, UserContextDTO.class);
+			Project project = dtoMapper.toProjectModel(projectDTO);		
+			project.setCreatedBy(userContext.getId());
+			ProjectCollaborator collaborator = new ProjectCollaborator();
+			collaborator.setProject(project);
+			collaborator.setUserId(userContext.getId());
+			collaborator.setRoles(Set.of(ProjectRole.OWNER));
+			project.getCollaborators().add(collaborator);
+			projectRepo.save(project);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void updateProject(ProjectRequestDTO projectDTO) {
+	public void updateProject(ProjectDTO projectDTO) {
 		Project project = dtoMapper.toProjectModel(projectDTO);		
 		projectRepo.save(project);
 	}
@@ -49,16 +73,35 @@ public class ProjectServiceImpl implements IProjectService {
 	}
 	
 	@Override
+	public ProjectDTO getProjectById(UUID id) {
+		Project project = projectRepo.findById(id).orElseThrow();
+		ProjectDTO projectDTO = dtoMapper.toProjectDTO(project);
+		List<UserDTO> users = iamClient.getUserByGroupId(project.getGroupId());
+		Map<UUID,UserDTO> userMap = users.stream().collect(Collectors.toMap(UserDTO::getId, Function.identity()));
+		
+		projectDTO.getCollaborators().forEach(collaborator->{
+			UserDTO user = userMap.get(collaborator.getUserId());
+			collaborator.setName(user.getUsername());
+			collaborator.setEmail(user.getEmail());
+			collaborator.setReviewer(collaborator.getRoles().contains(ProjectRole.REVIEWER));
+		});
+		
+		return projectDTO;
+	}
+	
+	@Override
 	@Transactional
-	public void addCollaborators(AddCollaboratorsDTO collaboratorsDTO) {
+	public void manageCollaborators(ManageCollaboratorsDTO collaboratorsDTO) {
 		Project project = projectRepo.findById(collaboratorsDTO.getProjectId()).orElseThrow();
 		
-		collaboratorsDTO.getCollaborators().forEach(member->{
+		List<ProjectCollaborator> collaborators =  collaboratorsDTO.getCollaborators().stream().map(member->{
 			ProjectCollaborator collaborator = new ProjectCollaborator();
 			collaborator.setProject(project);
 			collaborator.setUserId(member.getId());
 			collaborator.setRoles(member.getRoles());
-			project.getCollaborators().add(collaborator);
-		});
+			return collaborator;
+		}).collect(Collectors.toList());
+		
+		project.setCollaborators(collaborators);
 	}
 }

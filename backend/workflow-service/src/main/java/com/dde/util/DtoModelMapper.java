@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 import com.dde.dto.FlowListDTO;
 import com.dde.dto.FlowMetadataDTO;
 import com.dde.dto.FlowResponseDTO;
+import com.dde.dto.ProjectDTO;
 import com.dde.dto.ProjectListDTO;
-import com.dde.dto.ProjectRequestDTO;
 import com.dde.dto.SummaryDTO;
 import com.dde.model.Flow;
 import com.dde.model.Project;
@@ -25,7 +25,9 @@ public interface DtoModelMapper {
 	List<ProjectListDTO> toProjectDTOs(List<Project> projects);
 	
 	@Mapping(target = "flow", ignore = true)
-	Project toProjectModel(ProjectRequestDTO project);
+	Project toProjectModel(ProjectDTO project);
+	
+	ProjectDTO toProjectDTO(Project project);
 	
 	FlowMetadataDTO toFlowMetadataDTO(Flow flow);
 	

@@ -24,33 +24,44 @@ import {
 } from "@/components/ui/input-group";
 import { SearchIcon, Trash2Icon } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { apiService } from "../../services/crudService";
 
-export default function ManageCollaborators({ open, onOpenChange }: any) {
+export default function ManageCollaborators({ open, onOpenChange, project }: any) {
 
-    const [collaborators, setCollaborators] = useState<ICollaborator[]>([
-        {
-            id: "1",
-            name: "Dheeraj",
-            email: "dhe@gamil.com",
-            isReviewer: true
-        },
-        {
-            id: "2",
-            name: "Jhon",
-            email: "jhon@gamil.com",
-            isReviewer: false
-        },
-    ]);
+    const [collaborators, setCollaborators] = useState<ICollaborator[]>(project?.collaborators ?? []);
+    const [allUsers, setAllUsers] = useState<IUser[]>([]);
+    const [collaboratorsSet, setCollaboratorsSet] = useState(new Set());
+
+    useEffect(() => {
+        if (!project) return;
+        let newSet = new Set<String>(project?.collaborators.map((ele:ICollaborator)=>ele.userId));
+        setCollaborators(project?.collaborators);
+        setCollaboratorsSet(newSet);
+        getAllUsersByGroupId(newSet);
+    }, [project]);
+
+    const getAllUsersByGroupId = async (collabSet:Set<String>) => {
+        if (project) {
+            try {
+                let res: IUser[] = await apiService.getAllUsersByGroupId(project?.groupId);
+                res = res.filter(user => !collabSet.has(user.id));
+                setAllUsers(res);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 
     const addUsers = (users: IUser[]) => {
-
         setCollaborators((prev) => {
-            const newCollaborators: ICollaborator[] = users.map(user => (
+            const newCollaborators: ICollaborator[] = users?.map(user => (
                 {
                     ...user,
+                    userId: user.id,
                     name: user.username,
-                    isReviewer: false
+                    reviewer: false,
+                    roles:["COLLABORATOR"]
                 }
             ));
             return [...newCollaborators, ...prev];
@@ -58,18 +69,22 @@ export default function ManageCollaborators({ open, onOpenChange }: any) {
     }
 
     const save = () => {
-        console.log(collaborators);
+        const payload = {
+            projectId: project?.id,
+	        groupId: project?.groupId,
+	        collaborators
+        }
+        apiService.updateCollaborators(payload);
     }
 
-    const onCheckedChange=(id:string, checked:boolean)=>{
+    const onCheckedChange = (id: string, checked: boolean) => {
         setCollaborators((prev) => {
-            const newList = prev.filter(user=>user.id!== id);
-            let collaborator = prev.find(user=>user.id == id);
-            if(collaborator){
-                collaborator.isReviewer = checked;
-                return [...newList, collaborator];
+            let collaborator = prev.find(user => user.id == id);
+            if (collaborator) {
+                collaborator.reviewer = checked;
+                collaborator.roles.push("REVIEWER");
             }
-            return [...newList]
+            return [...prev]
         })
     }
 
@@ -86,17 +101,17 @@ export default function ManageCollaborators({ open, onOpenChange }: any) {
                             <SearchIcon />
                         </InputGroupAddon>
                     </InputGroup>
-                    <AddCollaborator addUsers={addUsers} />
+                    <AddCollaborator addUsers={addUsers} allUsers={allUsers} />
                 </div>
                 <ItemGroup className="max-w-lg h-100 overflow-y-auto gap-2 ">
-                    {collaborators.map((collaborator) => (
+                    {collaborators?.map((collaborator) => (
                         <Item key={collaborator?.id} variant="outline" className="flex">
                             <ItemContent className="gap-1">
                                 <ItemTitle>{collaborator?.name}</ItemTitle>
                                 <ItemDescription>{collaborator?.email}</ItemDescription>
                             </ItemContent>
                             <div className="flex-1 flex justify-end items-center gap-1">
-                                <Checkbox checked={collaborator?.isReviewer} onCheckedChange={(value:boolean)=>onCheckedChange(collaborator?.id,value)} /> Reviewer
+                                <Checkbox checked={collaborator?.reviewer} onCheckedChange={(value: boolean) => onCheckedChange(collaborator?.id, value)} /> Reviewer
                             </div>
                             <ItemActions className="flex-1 justify-end">
                                 <Button variant="ghost" size="icon" className="rounded-full">

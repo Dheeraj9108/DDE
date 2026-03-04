@@ -1,5 +1,5 @@
 import api from "@/components/util/api";
-import { IFlowPayLoad } from "../interfaces/flow-interface";
+import { ICollaborator, IFlowPayLoad } from "../interfaces/flow-interface";
 
 const BASE_URL: string = "/api/workflow/flows";
 
@@ -7,15 +7,8 @@ const HEADERS = { "Content-Type": "application/json" };
 
 export const apiService = {
   getAllFlows: async (projectId: string) => {
-    try {
-      const res = await fetch(`${BASE_URL}?projectId=${projectId}`, {
-        method: "GET",
-        headers: HEADERS,
-      });
-      return await res.json();
-    } catch (error) {
-      throw error;
-    }
+    const res = await api.get(`${BASE_URL}?projectId=${projectId}`);
+    return res.data;
   },
 
   createFlow: async (data: any) => {
@@ -57,22 +50,31 @@ export const apiService = {
   getFlowById: async (id: string) => {
     const res = await api.get(`/api/workflow/flows/${id}`);
     return res.data;
-    // try {
-    //   const res = await fetch(`${BASE_URL}/${id}`, {
-    //     method: "GET",
-    //     headers: HEADERS,
-    //   });
-    //   return await res.json();
-    // } catch (error) {
-    //   throw error;
-    // }
+  },
+
+  getProjectById: async (id: string) => {
+    const res = await api.get(`/api/workflow/projects/${id}`);
+    return res.data;
+  },
+
+  getAllUsersByGroupId: async (id: string) => {
+    const res = await api.get(`/iam/groups/getAllUsers/${id}`);
+    return res.data;
+  },
+
+  updateCollaborators: async (payload: any) => {
+    const res = await api.post(
+      `/api/workflow/projects/manageCollaborators`,
+      payload,
+    );
+    return res.data;
   },
 
   startReview: async (id: string) => {
     try {
-      const res = await fetch(`${BASE_URL}/${id}/startReview`,{
-        headers:HEADERS,
-        method:"POST"
+      const res = await fetch(`${BASE_URL}/${id}/startReview`, {
+        headers: HEADERS,
+        method: "POST",
       });
       return await res.json();
     } catch (error) {
@@ -80,16 +82,16 @@ export const apiService = {
     }
   },
 
-  requestReview:async(payload:any)=>{
+  requestReview: async (payload: any) => {
     try {
-      const res = await fetch(`${BASE_URL}/requestReview`,{
-        headers:HEADERS,
-        method:"POST",
-        body:JSON.stringify(payload)
+      const res = await fetch(`${BASE_URL}/requestReview`, {
+        headers: HEADERS,
+        method: "POST",
+        body: JSON.stringify(payload),
       });
       return await res.json();
     } catch (error) {
       throw error;
     }
-  }
+  },
 };

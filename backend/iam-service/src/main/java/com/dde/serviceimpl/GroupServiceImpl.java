@@ -1,5 +1,6 @@
 package com.dde.serviceimpl;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -88,5 +89,16 @@ public class GroupServiceImpl implements IGroupService {
 		savedGroup.setInviteCode(group.getInviteCode());
 		savedGroup.setCreatedAt(group.getCreatedAt());
 		return savedGroup;
+	}
+	
+	public List<UserDTO> getMembersByGroupId(UUID id) {
+		List<User> users = groupRepo.findMembersByGroupId(id);
+		return users.stream().map(user->{
+			UserDTO userDTO = new UserDTO();
+			userDTO.setId(user.getId());
+			userDTO.setUsername(user.getUsername());
+			userDTO.setEmail("dhe@gmail.com");
+			return userDTO;
+		}).collect(Collectors.toList());
 	}
 }

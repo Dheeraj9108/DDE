@@ -3,19 +3,21 @@ package com.dde.service;
 import java.util.List;
 import java.util.UUID;
 
-import com.dde.dto.AddCollaboratorsDTO;
+import com.dde.dto.ManageCollaboratorsDTO;
+import com.dde.dto.ProjectDTO;
 import com.dde.dto.ProjectListDTO;
-import com.dde.dto.ProjectRequestDTO;
 
 public interface IProjectService {
 	
 	List<ProjectListDTO> getAllProjects(UUID groupId);
 	
-	void createProject(ProjectRequestDTO projectDTO);
+	void createProject(ProjectDTO projectDTO, String userContextObj);
 	
-	void updateProject(ProjectRequestDTO projectDTO);
+	void updateProject(ProjectDTO projectDTO);
 	
 	void deleteProject(UUID id);
 	
-	void addCollaborators(AddCollaboratorsDTO collaboratorsDTO);
+	void manageCollaborators(ManageCollaboratorsDTO collaboratorsDTO);
+	
+	ProjectDTO getProjectById(UUID id);
 }

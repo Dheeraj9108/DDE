@@ -1,5 +1,6 @@
 package com.dde.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dde.dto.GroupDTO;
 import com.dde.dto.JoinGroup;
+import com.dde.dto.UserDTO;
 import com.dde.service.IGroupService;
 
 import lombok.RequiredArgsConstructor;
@@ -38,5 +40,10 @@ public class GroupController {
 	@PostMapping("/join")
 	public ResponseEntity<GroupDTO> joinGroup(@RequestHeader("X-USER-NAME") String username,@RequestBody JoinGroup joinGroupDTO){
 		return ResponseEntity.status(HttpStatus.CREATED).body(groupService.joinGroup(joinGroupDTO,username)); 
+	}
+	
+	@GetMapping("/getAllUsers/{groupId}")
+	public ResponseEntity<List<UserDTO>> getAllUsers(@PathVariable("groupId") UUID groupId){
+		return ResponseEntity.ok(groupService.getMembersByGroupId(groupId));
 	}
 }

@@ -24,29 +24,19 @@ import {
 } from "@/components/ui/input-group";
 import { IconPlus } from "@tabler/icons-react";
 import { PlusIcon, SearchIcon, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IUser } from "../../interfaces/flow-interface";
 
-export default function AddCollaborator({ addUsers }: any) {
+export default function AddCollaborator({ addUsers, allUsers }: any) {
 
-    const [users, setUsers] = useState<IUser[]>([
-        {
-            id: "1",
-            username: "shadcn",
-            email: "shadcn@vercel.com",
-        },
-        {
-            id: "2",
-            username: "maxleiter",
-            email: "maxleiter@vercel.com",
-        },
-        {
-            id: "3",
-            username: "evilrabbit",
-            email: "evilrabbit@vercel.com",
-        },
-    ]);
+    const [users, setUsers] = useState<IUser[]>(allUsers??[]);
     const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
+
+    useEffect(()=>{
+        setSelectedUsers([]);
+        if(!allUsers) return;
+        setUsers(allUsers);
+    },[allUsers]);
 
     const selectUser = (user: IUser) => {
         setUsers((prev) => prev.filter(prevUser => prevUser.id !== user.id));
@@ -74,7 +64,7 @@ export default function AddCollaborator({ addUsers }: any) {
                 </InputGroup>
 
                 <ItemGroup className="max-w-lg max-h-[50vh] overflow-y-auto gap-4">
-                    {users.map((user, index) => (
+                    {users.map((user) => (
                         <Item key={user?.id} variant="outline">
                             <ItemContent className="gap-1">
                                 <ItemTitle>{user?.username}</ItemTitle>

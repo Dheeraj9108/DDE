@@ -1,6 +1,7 @@
 package com.dde.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,5 +47,5 @@ public class Project {
 	private UUID groupId;
 	
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<ProjectCollaborator> collaborators;
+	private List<ProjectCollaborator> collaborators = new ArrayList<>();
 }

@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Data;
 
 @Data
-public class AddCollaboratorsDTO {
+public class ManageCollaboratorsDTO {
 	private UUID projectId;
 	private UUID groupId;
 	private List<CollaboratorDTO> collaborators;

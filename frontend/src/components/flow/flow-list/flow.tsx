@@ -8,32 +8,26 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IActionItem } from "../../shared/interfaces/interfaces";
 import { IconEdit, IconEye, IconPencil, IconTrash } from "@tabler/icons-react";
 import { MdOutlineAssignmentInd } from "react-icons/md";
-import { generateColumns } from "../../shared/columns";
-import * as CONST from "../constants";
 import ReviewDialog from "./review-dialog";
 import { columns } from "./columns";
 import { Badge } from "@/components/ui/badge";
-import { Plus } from "lucide-react";
 import { RiTeamFill } from "react-icons/ri";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-import { PlusIcon } from "lucide-react";
 import ManageCollaborators from "./collaborator/manage-collaborators";
+import { IProject } from "../interfaces/project-interfaces";
 
 export function Flow() {
   const [flows, setFlows] = useState<IFlowListItem[]>([]);
   const [showDialog, setShowDialog] = useState<boolean>();
-  const { projectId } = useParams();
   const [flow, setFlow] = useState<IFlowListItem>();
-  const [showColabDialog,setShowColabDialog] = useState<boolean>();
+  const [showColabDialog, setShowColabDialog] = useState<boolean>();
+  const [project, setProject] = useState<IProject>();
+  const { projectId } = useParams();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchFlows();
-  }, []);
 
   let breadcrumbItems: any = [];
   const setBreadcrumb = () => {
@@ -52,6 +46,25 @@ export function Flow() {
       },
     ];
   };
+
+  useEffect(() => {
+    getInfo();
+  }, []);
+
+  const getInfo = async () => {
+    await Promise.all([fetchFlows(), getProjectById()]);
+    console.log(project?.collaborators);
+  }
+
+  const fetchFlows = async () => {
+    const data: IFlowListItem[] = await apiService.getAllFlows(projectId!);
+    setFlows(data);
+  };
+
+  const getProjectById = async () => {
+    const res = await apiService.getProjectById(projectId ?? '');
+    setProject(res);
+  }
 
   const handleDelete = async (row: IFlowListItem) => {
     await apiService.deleteFlow(row.id);
@@ -108,10 +121,7 @@ export function Flow() {
     fetchFlows();
   };
 
-  const fetchFlows = async () => {
-    const data: IFlowListItem[] = await apiService.getAllFlows(projectId!);
-    setFlows(data);
-  };
+
 
   const requestReview = async (payload: any) => {
     await apiService.requestReview(payload);
@@ -125,24 +135,24 @@ export function Flow() {
       <div className="container mx-auto max-w-6xl">
         <div className="grid grid-cols-[70%_30%] border-b  py-5">
           <div className="space-y-2 ">
-            <div className="text-2xl font-bold mb-1 ">Engine</div>
+            <div className="text-2xl font-bold mb-1 ">{project?.name}</div>
             <div className="text-sm text-gray-500 mb-2 pb-2 ">
-              Diagnostic Engine Project for issue Identification
+              {project?.description}
             </div>
             <div className="flex justify-between text-s text-gray-500">
               <div>
                 Owner : Dheeraj
               </div>
               <div>
-                Created At : 07-02-2026
+                Created At : {new Date(project?.createdAt ?? '').toLocaleString()}
               </div>
             </div>
             <div className="flex flex-col text-blue-400/75 space-y-2">
               <div className="flex">
-                <RiTeamFill className="mt-1 mr-1"/> Collaborators
-                <span className="text-xs flex gap-1 mt-1 mx-2 hover:text-primary cursor-pointer" onClick={()=>setShowColabDialog(true)}>
-                    <IconPencil size={15} />Edit
-                  </span>
+                <RiTeamFill className="mt-1 mr-1" /> Collaborators
+                <span className="text-xs flex gap-1 mt-1 mx-2 hover:text-primary cursor-pointer" onClick={() => setShowColabDialog(true)}>
+                  <IconPencil size={15} />Edit
+                </span>
               </div>
               <div className="flex flex-wrap gap-1">
                 <Avatar>
@@ -176,8 +186,8 @@ export function Flow() {
           />
         </div>
       </div>
+      <ManageCollaborators open={showColabDialog} onOpenChange={() => setShowColabDialog(false)} project={project} />
       <ReviewDialog open={showDialog} flow={flow} onClose={() => setShowDialog(false)} requestReview={requestReview} />
-      <ManageCollaborators open={showColabDialog} onOpenChange={() => setShowColabDialog(false)} />
     </>
   );
 }
