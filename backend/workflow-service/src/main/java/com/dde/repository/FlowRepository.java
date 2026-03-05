@@ -13,8 +13,8 @@ import com.dde.model.Flow;
 
 public interface FlowRepository extends JpaRepository<Flow, UUID> {
 	
-	@Query(value="SELECT create_flow_with_defaults(:projectId, :name, :description)", nativeQuery = true)
-	public UUID createFlowTemplate(@Param("projectId")UUID projectId,@Param("name")String name,@Param("description")String desription);
+	@Query(value="SELECT create_flow_with_defaults(:projectId, :name, :description, :userId)", nativeQuery = true)
+	public UUID createFlowTemplate(@Param("projectId")UUID projectId,@Param("name")String name,@Param("description")String desription, @Param("userId") UUID userId);
 	
 	public List<Flow> findByProjectId(UUID projectId);
 	

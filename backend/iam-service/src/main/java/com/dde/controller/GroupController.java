@@ -38,8 +38,8 @@ public class GroupController {
 	}
 	
 	@PostMapping("/join")
-	public ResponseEntity<GroupDTO> joinGroup(@RequestHeader("X-USER-NAME") String username,@RequestBody JoinGroup joinGroupDTO){
-		return ResponseEntity.status(HttpStatus.CREATED).body(groupService.joinGroup(joinGroupDTO,username)); 
+	public ResponseEntity<GroupDTO> joinGroup(@RequestHeader("X-USER-INFO") String userContextObj,@RequestBody JoinGroup joinGroupDTO){
+		return ResponseEntity.status(HttpStatus.CREATED).body(groupService.joinGroup(joinGroupDTO,userContextObj)); 
 	}
 	
 	@GetMapping("/getAllUsers/{groupId}")

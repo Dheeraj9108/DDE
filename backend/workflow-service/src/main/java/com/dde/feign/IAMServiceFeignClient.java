@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.dde.dto.UserDTO;
 
@@ -15,5 +17,8 @@ public interface IAMServiceFeignClient {
 
 	@GetMapping("/groups/getAllUsers/{groupId}")
 	List<UserDTO> getUserByGroupId(@PathVariable("groupId") UUID id);
+	
+	@PostMapping("/users/getUsersInBatch")
+	List<UserDTO> getUsersInBatch(@RequestBody List<UUID> ids);
 	
 }

@@ -77,7 +77,7 @@ export function Flow() {
   }
 
   const handleView = (row: IFlowListItem) => {
-    navigate(`/projects/${projectId}/flows/${row.id}`);
+    navigate(`${row.id}`);
   }
 
   const handleReview = (row: IFlowListItem) => {

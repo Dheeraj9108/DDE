@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 
 import com.dde.dto.GroupDTO;
 import com.dde.dto.JoinGroup;
+import com.dde.dto.UserContextDTO;
 import com.dde.dto.UserDTO;
 import com.dde.model.Group;
 import com.dde.model.User;
 import com.dde.repository.GroupRepository;
 import com.dde.repository.UserRepository;
 import com.dde.service.IGroupService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -77,17 +80,22 @@ public class GroupServiceImpl implements IGroupService {
 
 	@Override
 	@Transactional
-	public GroupDTO joinGroup(JoinGroup joinGroupDTO,String username) {
-		User user = userRepo.findByUsername(username).orElseThrow();
-		Group group = groupRepo.findByInviteCode(joinGroupDTO.getCode()); 
-		user.getGroups().add(group);
-		
+	public GroupDTO joinGroup(JoinGroup joinGroupDTO,String userContextObj) {
 		GroupDTO savedGroup = new GroupDTO();
-		savedGroup.setId(group.getId());
-		savedGroup.setDescription(group.getDescription());
-		savedGroup.setName(group.getName());
-		savedGroup.setInviteCode(group.getInviteCode());
-		savedGroup.setCreatedAt(group.getCreatedAt());
+		try {
+			UserContextDTO userContext = new ObjectMapper().readValue(userContextObj, UserContextDTO.class);
+			User user = userRepo.findByUsername(userContext.getUsername()).orElseThrow();
+			Group group = groupRepo.findByInviteCode(joinGroupDTO.getCode()); 
+			user.getGroups().add(group);
+		
+			savedGroup.setId(group.getId());
+			savedGroup.setDescription(group.getDescription());
+			savedGroup.setName(group.getName());
+			savedGroup.setInviteCode(group.getInviteCode());
+			savedGroup.setCreatedAt(group.getCreatedAt());
+		} catch(JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		return savedGroup;
 	}
 	

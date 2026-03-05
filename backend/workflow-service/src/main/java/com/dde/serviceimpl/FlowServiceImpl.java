@@ -35,10 +35,13 @@ import com.dde.dto.ReviewRequestDTO;
 import com.dde.dto.StartDiagnosisDTO;
 import com.dde.dto.StartDiagnosisRequestDTO;
 import com.dde.dto.SummaryDTO;
+import com.dde.dto.UserContextDTO;
+import com.dde.dto.UserDTO;
 import com.dde.dto.UserResponseDTO;
 import com.dde.enums.DiagnosisStatus;
 import com.dde.enums.FlowStatus;
 import com.dde.enums.InputType;
+import com.dde.feign.IAMServiceFeignClient;
 import com.dde.model.Edge;
 import com.dde.model.Flow;
 import com.dde.model.InternalNodeData;
@@ -53,6 +56,7 @@ import com.dde.repository.SessionRepository;
 import com.dde.service.IFlowService;
 import com.dde.util.CursorCodec;
 import com.dde.util.DtoModelMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.transaction.Transactional;
 
@@ -79,15 +83,35 @@ public class FlowServiceImpl implements IFlowService {
 	
 	@Autowired
 	private EventPublisher eventPublisher;
+	
+	@Autowired
+	private IAMServiceFeignClient iamClient;
 
 	@Override
 	public List<FlowListDTO> getFlows(UUID projectId) {
-		return dtoMapper.toFlowDTOs(flowRepo.findByProjectId(projectId));
+		List<Flow> flows = flowRepo.findByProjectId(projectId);
+		List<UUID> payload = flows.stream().map(Flow::getCreatedBy).collect(Collectors.toList());
+		List<UserDTO> users = iamClient.getUsersInBatch(payload);
+		Map<UUID,UserDTO> userMap = users.stream().collect(Collectors.toMap(UserDTO::getId, Function.identity()));
+		
+		List<FlowListDTO> flowListDTOs = dtoMapper.toFlowDTOs(flows);
+		flowListDTOs.forEach(flow->{
+			UserDTO user = userMap.get(flow.getUserId());
+			flow.setCreatedBy(user.getUsername());
+		});
+		return flowListDTOs;
 	}
 
 	@Override
-	public UUID createFlowTemplate(FlowTemplateDTO flowDto) {
-		return flowRepo.createFlowTemplate(flowDto.getProjectId(), flowDto.getName(), flowDto.getDescription());
+	public UUID createFlowTemplate(FlowTemplateDTO flowDto, String userContextObj) {
+		UUID id = null;
+		try {
+			UserContextDTO userContext = new ObjectMapper().readValue(userContextObj, UserContextDTO.class);
+			id = flowRepo.createFlowTemplate(flowDto.getProjectId(), flowDto.getName(), flowDto.getDescription(), userContext.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return id;
 	}
 
 	@Override
@@ -98,7 +122,7 @@ public class FlowServiceImpl implements IFlowService {
 	@Override
 	public FlowResponseDTO getFlowById(UUID id) {
 		Flow flow = flowRepo.findById(id).orElseThrow();
-		return dtoMapper.toFlowDTO(flow);
+		return dtoMapper.toFlowResponseDTO(flow);
 	}
 
 	@Override

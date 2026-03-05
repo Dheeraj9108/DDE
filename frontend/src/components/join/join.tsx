@@ -11,7 +11,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { IGroup } from "./interfaces/interfaces";
-import { CRUDService } from "./services/crud-service";
+import { apiService } from "./services/crud-service";
 import { useState } from "react";
 import { useAuth } from "@/AuthProvider";
 import { toast } from "sonner";
@@ -36,7 +36,7 @@ export function Join() {
                     id: user.id
                 }
             }
-            const group = await CRUDService.createGroup(payload);
+            const group = await apiService.createGroup(payload);
             navigate(`/group/${group?.id}/dashboard`);
         } catch (error) {
 
@@ -52,7 +52,7 @@ export function Join() {
             const payload = {
                 code,
             }
-            const group = await CRUDService.joinGroup(payload);
+            const group = await apiService.joinGroup(payload);
             navigate(`/group/${group?.id}/dashboard`);
         } catch (error) {
 

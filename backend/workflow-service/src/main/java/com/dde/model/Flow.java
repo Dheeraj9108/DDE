@@ -58,4 +58,7 @@ public class Flow {
 	
 	@CreationTimestamp
 	private LocalDateTime createdAt;
+	
+	@Column(nullable=false)
+	private UUID createdBy;
 }

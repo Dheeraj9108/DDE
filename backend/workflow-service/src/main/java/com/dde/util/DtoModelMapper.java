@@ -18,9 +18,13 @@ import com.dde.model.TerminalNodeData;
 @Mapper(componentModel = "spring")
 public interface DtoModelMapper {
 
+	@Mapping(target = "userId", source = "createdBy")
+    FlowListDTO toFlowDTO(Flow flow);
+	
+	@Mapping(target = "createdBy", source="userId")
 	List<FlowListDTO> toFlowDTOs(List<Flow> flows);
 
-	FlowResponseDTO toFlowDTO(Flow flow);
+	FlowResponseDTO toFlowResponseDTO(Flow flow);
 	
 	List<ProjectListDTO> toProjectDTOs(List<Project> projects);
 	

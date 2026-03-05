@@ -1,5 +1,8 @@
 package com.dde.controller;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,5 +42,10 @@ public class UserController {
 	public ResponseEntity<UserDTO> getUserProfile(@RequestHeader("X-USER-INFO") String userContextObj){
 		UserDTO user = userService.getUserProfile(userContextObj);
 		return ResponseEntity.ok(user);
+	}
+	
+	@PostMapping("getUsersInBatch")
+	public ResponseEntity<List<UserDTO>> getUsersInBatch(@RequestBody List<UUID> ids){
+		return ResponseEntity.ok(userService.getUsersInBatch(ids));
 	}
 }

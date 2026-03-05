@@ -1,5 +1,6 @@
 package com.dde.serviceimpl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dde.dto.CollaboratorDTO;
 import com.dde.dto.ManageCollaboratorsDTO;
 import com.dde.dto.ProjectDTO;
 import com.dde.dto.ProjectListDTO;
@@ -54,7 +56,7 @@ public class ProjectServiceImpl implements IProjectService {
 			collaborator.setProject(project);
 			collaborator.setUserId(userContext.getId());
 			collaborator.setRoles(Set.of(ProjectRole.OWNER));
-			project.getCollaborators().add(collaborator);
+			project.setCollaborators(List.of(collaborator));
 			projectRepo.save(project);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
@@ -94,14 +96,26 @@ public class ProjectServiceImpl implements IProjectService {
 	public void manageCollaborators(ManageCollaboratorsDTO collaboratorsDTO) {
 		Project project = projectRepo.findById(collaboratorsDTO.getProjectId()).orElseThrow();
 		
-		List<ProjectCollaborator> collaborators =  collaboratorsDTO.getCollaborators().stream().map(member->{
-			ProjectCollaborator collaborator = new ProjectCollaborator();
-			collaborator.setProject(project);
-			collaborator.setUserId(member.getId());
-			collaborator.setRoles(member.getRoles());
-			return collaborator;
-		}).collect(Collectors.toList());
+		Map<UUID,ProjectCollaborator> map = project.getCollaborators().stream().collect(Collectors.toMap(ProjectCollaborator::getUserId, c->c));
 		
-		project.setCollaborators(collaborators);
+		Set<UUID> incomingIds = new HashSet<>();
+		
+		for(CollaboratorDTO collaborator: collaboratorsDTO.getCollaborators()) {
+			
+			ProjectCollaborator projectCollaborator = map.get(collaborator.getUserId());
+			
+			incomingIds.add(collaborator.getUserId());
+			
+			if(projectCollaborator == null) {
+				projectCollaborator = new ProjectCollaborator();
+				projectCollaborator.setProject(project);
+				projectCollaborator.setUserId(collaborator.getUserId());
+				project.getCollaborators().add(projectCollaborator);
+			}
+			
+			projectCollaborator.setRoles(collaborator.getRoles());
+		}
+		
+		project.getCollaborators().removeIf(collaborator-> !incomingIds.contains(collaborator.getUserId()));
 	}
 }

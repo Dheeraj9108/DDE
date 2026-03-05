@@ -20,7 +20,7 @@ public interface IFlowService {
 		
 	public List<FlowListDTO> getFlows(UUID projectId);
 	
-	public UUID createFlowTemplate(FlowTemplateDTO flow);
+	public UUID createFlowTemplate(FlowTemplateDTO flow, String userContextObj);
 	
 	public void deleteFlowTemplate(UUID id);
 	

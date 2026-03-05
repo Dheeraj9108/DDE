@@ -1,7 +1,9 @@
 package com.dde.service;
 
+import java.util.List;
+import java.util.UUID;
+
 import com.dde.dto.UserDTO;
-import com.dde.model.User;
 
 public interface IUserService {
 	
@@ -10,4 +12,6 @@ public interface IUserService {
 	UserDTO getUserProfile(String userContextObj);
 	
 	void createUser(UserDTO user);
+	
+	List<UserDTO> getUsersInBatch(List<UUID> ids);
 }

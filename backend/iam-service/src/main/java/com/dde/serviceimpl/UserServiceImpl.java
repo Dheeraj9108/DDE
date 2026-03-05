@@ -1,7 +1,7 @@
 package com.dde.serviceimpl;
 
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -70,4 +70,15 @@ public class UserServiceImpl implements IUserService {
 		userRepository.save(user);
 	}
 
+	@Override
+	public List<UserDTO> getUsersInBatch(List<UUID> ids){
+		List<User> users = userRepository.findAllById(ids);
+		return users.stream().map(user->{
+			UserDTO userDTO = new UserDTO();
+			userDTO.setId(user.getId());
+			userDTO.setUsername(user.getUsername());
+			userDTO.setEmail("dhe@gmail.com");
+			return userDTO;
+		}).collect(Collectors.toList());
+	}
 }

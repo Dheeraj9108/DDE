@@ -39,7 +39,7 @@ export default function ManageCollaborators({ open, onOpenChange, project }: any
         setCollaborators(project?.collaborators);
         setCollaboratorsSet(newSet);
         getAllUsersByGroupId(newSet);
-    }, [project]);
+    }, [project,open]);
 
     const getAllUsersByGroupId = async (collabSet:Set<String>) => {
         if (project) {
@@ -75,6 +75,7 @@ export default function ManageCollaborators({ open, onOpenChange, project }: any
 	        collaborators
         }
         apiService.updateCollaborators(payload);
+        onOpenChange(false);
     }
 
     const onCheckedChange = (id: string, checked: boolean) => {
@@ -86,6 +87,13 @@ export default function ManageCollaborators({ open, onOpenChange, project }: any
             }
             return [...prev]
         })
+    }
+
+    const deleteCollaborator=(id:string)=>{
+        setCollaborators((prev)=>{
+            const newList = prev.filter(collaborator => collaborator.id !== id);
+            return newList;
+        });
     }
 
     return (
@@ -114,8 +122,8 @@ export default function ManageCollaborators({ open, onOpenChange, project }: any
                                 <Checkbox checked={collaborator?.reviewer} onCheckedChange={(value: boolean) => onCheckedChange(collaborator?.id, value)} /> Reviewer
                             </div>
                             <ItemActions className="flex-1 justify-end">
-                                <Button variant="ghost" size="icon" className="rounded-full">
-                                    <Trash2Icon />
+                                <Button variant="ghost" size="icon" className="rounded-full" onClick={()=>deleteCollaborator(collaborator?.id)}>
+                                    <Trash2Icon/>
                                 </Button>
                             </ItemActions>
                         </Item>

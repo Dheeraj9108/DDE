@@ -1,5 +1,5 @@
 import api from "@/components/util/api";
-import { ICollaborator, IFlowPayLoad } from "../interfaces/flow-interface";
+import { IFlowPayLoad } from "../interfaces/flow-interface";
 
 const BASE_URL: string = "/api/workflow/flows";
 
@@ -12,16 +12,8 @@ export const apiService = {
   },
 
   createFlow: async (data: any) => {
-    try {
-      const res = await fetch(BASE_URL, {
-        method: "POST",
-        headers: HEADERS,
-        body: JSON.stringify(data),
-      });
-      return await res.json();
-    } catch (error) {
-      throw error;
-    }
+    const res = await api.post(BASE_URL, data);
+    return res.data;
   },
 
   deleteFlow: async (id: string) => {
