@@ -46,4 +46,10 @@ public class GroupController {
 	public ResponseEntity<List<UserDTO>> getAllUsers(@PathVariable("groupId") UUID groupId){
 		return ResponseEntity.ok(groupService.getMembersByGroupId(groupId));
 	}
+	
+	@PostMapping("/{groupId}/roles-permissions")
+	public ResponseEntity<String> updateRolesAndPermissions(@PathVariable("groupId") UUID groupId,@RequestBody List<UserDTO> users){
+		groupService.updateRolesAndPermissions(users, groupId);
+		return ResponseEntity.ok("Update Success");
+	}
 }

@@ -6,7 +6,7 @@ const BASE_URL: string = "/api/workflow/projects";
 export const apiService = {
 
   getAllProjects: async (groupId:string) => {
-    const res = await api.get(`${BASE_URL}/${groupId}//getAllProjects`);
+    const res = await api.get(`${BASE_URL}/${groupId}/getAllProjects`);
     return res.data;
   },
 

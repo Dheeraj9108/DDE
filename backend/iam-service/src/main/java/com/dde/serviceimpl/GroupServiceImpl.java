@@ -1,8 +1,11 @@
 package com.dde.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -13,7 +16,9 @@ import com.dde.dto.UserContextDTO;
 import com.dde.dto.UserDTO;
 import com.dde.model.Group;
 import com.dde.model.User;
+import com.dde.model.UserGroup;
 import com.dde.repository.GroupRepository;
+import com.dde.repository.UserGroupRepository;
 import com.dde.repository.UserRepository;
 import com.dde.service.IGroupService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,6 +34,8 @@ public class GroupServiceImpl implements IGroupService {
 	private final UserRepository userRepo;
 
 	private final GroupRepository groupRepo;
+	
+	private final UserGroupRepository userGroupRepo;
 
 	@Override
 	@Transactional
@@ -101,12 +108,44 @@ public class GroupServiceImpl implements IGroupService {
 	
 	public List<UserDTO> getMembersByGroupId(UUID id) {
 		List<User> users = groupRepo.findMembersByGroupId(id);
+		List<UserGroup> existingUsers = userGroupRepo.findByGroupId(id);
+		Map<UUID, UserGroup> userMap = existingUsers.stream().collect(Collectors.toMap(UserGroup::getUserId, Function.identity()));
 		return users.stream().map(user->{
+			UserGroup ug = userMap.get(user.getId());
 			UserDTO userDTO = new UserDTO();
 			userDTO.setId(user.getId());
 			userDTO.setUsername(user.getUsername());
 			userDTO.setEmail("dhe@gmail.com");
+			if(ug != null) {				
+				userDTO.setRoles(ug.getRoles());
+				userDTO.setProjectOwner(ug.isProjectOwner());
+			}
 			return userDTO;
 		}).collect(Collectors.toList());
+	}
+	
+	@Override
+	public void updateRolesAndPermissions(List<UserDTO> users, UUID groupId) {
+		List<UUID> userIds = users.stream().map(UserDTO::getId).collect(Collectors.toList());
+		List<UserGroup> existingUsers = userGroupRepo.findByUserIdInAndGroupId(userIds, groupId);
+		Map<UUID, UserGroup> userMap = existingUsers.stream().collect(Collectors.toMap(UserGroup::getUserId, Function.identity()));
+		
+		List<UserGroup> toSave = new ArrayList<>();
+		for(UserDTO user : users) {
+			UserGroup u = userMap.get(user.getId());
+			if(u == null) {
+				UserGroup ug = new UserGroup();
+				ug.setUserId(user.getId());
+				ug.setGroupId(groupId);
+				ug.setProjectOwner(user.isProjectOwner());
+				ug.setRoles(user.getRoles());
+				toSave.add(ug);
+			} else {
+				u.setRoles(user.getRoles());
+				u.setProjectOwner(user.isProjectOwner());
+				toSave.add(u);
+			}
+		}
+		userGroupRepo.saveAll(toSave);
 	}
 }

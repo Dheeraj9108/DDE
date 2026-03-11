@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.dde.model.Group;
 import com.dde.model.User;
+import com.dde.model.UserGroup;
 
 public interface GroupRepository extends JpaRepository<Group, UUID>{
 	Group findByInviteCode(UUID code);

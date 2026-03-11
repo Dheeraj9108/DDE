@@ -16,4 +16,6 @@ public interface IGroupService {
 	GroupDTO joinGroup(JoinGroup joinGrouDTO, String userName);
 	
 	List<UserDTO> getMembersByGroupId(UUID id);
+	
+	void updateRolesAndPermissions(List<UserDTO> users, UUID groupId);
 }

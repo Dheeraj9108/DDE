@@ -1,16 +1,21 @@
 import { Header } from "../shared/header";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
 import { DataTable } from "../shared/data-table/data-table";
 import { columns } from "./columns";
+import { useEffect, useState } from "react";
+import { apiService } from "./apiService";
+import { useParams } from "react-router-dom";
+import { IUser } from "./interface";
+import { IActionItem } from "../shared/interfaces/interfaces";
+import { IconTrash } from "@tabler/icons-react";
+import { Button } from "../ui/button";
 
 export function Teams() {
   let breadcrumbItems: any = [];
+
+  const [users, setUsers] = useState<IUser[]>([]);
+  const [updatedUsers, setUpdatedUsers] = useState<Record<string,IUser>>({});
+  const {groupId} = useParams();
+  
   const setBreadcrumb = () => {
     breadcrumbItems = [
       {
@@ -23,25 +28,44 @@ export function Teams() {
       },
     ];
   };
+  
   setBreadcrumb();
-  let data: any = [
+
+  const handleDelete=()=>{
+
+  }
+
+  const actions: IActionItem[] = [
     {
-      name: "Dheeraj",
-      role: "viewer",
-    },
-    {
-      name: "Joe",
-      role: "viewer",
-    },
-    {
-      name: "Alice",
-      role: "viewer",
-    },
-    {
-      name: "Bob",
-      role: "viewer",
-    },
+      label: "Delete",
+      icon: <IconTrash />,
+      onClick: handleDelete
+    }
   ];
+
+  useEffect(()=>{
+    getAllUsers();
+  },[]);
+
+  const getAllUsers=async()=>{
+    const res = await apiService.getAllUserByGroupId(groupId!);
+    setUsers(res);
+  }
+
+  const onUserUpdate=(user:IUser)=>{
+    setUpdatedUsers((prev)=>({
+        ...prev,
+        [user.id]:{
+          ...user
+        }
+    }));
+  }
+
+  const handleSave=async()=>{
+    const res = await apiService.updateRolesAndPermission(Object.values(updatedUsers),groupId!);
+    console.log(res);
+  }
+  
   return (
     <>
       <Header breadcrumbs={breadcrumbItems} />
@@ -50,18 +74,10 @@ export function Teams() {
         <div className="text-sm text-gray-500 mb-2">
           Invite your team members to collaborate.
         </div>
-        <DataTable columns={columns} data={data} showCreate={false} filterKey={""} />
+        <DataTable columns={columns(actions, onUserUpdate)} data={users} showCreate={false} filterKey={""} >
+          <Button className="mx-2" onClick={handleSave}>Save</Button>
+        </DataTable>
       </div>
-      {/* <Card className="gap-0">
-          <CardHeader>
-            <CardTitle>Team Members</CardTitle>
-            <CardDescription>
-              Invite your team members to collaborate.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-0">
-          </CardContent> 
-        </Card>*/}
     </>
   );
 }
