@@ -111,11 +111,12 @@ public class GroupServiceImpl implements IGroupService {
 		List<UserGroup> existingUsers = userGroupRepo.findByGroupId(id);
 		Map<UUID, UserGroup> userMap = existingUsers.stream().collect(Collectors.toMap(UserGroup::getUserId, Function.identity()));
 		return users.stream().map(user->{
-			UserGroup ug = userMap.get(user.getId());
 			UserDTO userDTO = new UserDTO();
 			userDTO.setId(user.getId());
 			userDTO.setUsername(user.getUsername());
 			userDTO.setEmail("dhe@gmail.com");
+			
+			UserGroup ug = userMap.get(user.getId());
 			if(ug != null) {				
 				userDTO.setRoles(ug.getRoles());
 				userDTO.setProjectOwner(ug.isProjectOwner());
@@ -148,4 +149,24 @@ public class GroupServiceImpl implements IGroupService {
 		}
 		userGroupRepo.saveAll(toSave);
 	}
+
+	@Override
+	public List<GroupDTO> getAllUserGroups(String userContextObj) {
+		try {
+			UserContextDTO userContext = new ObjectMapper().readValue(userContextObj, UserContextDTO.class);
+			User user = userRepo.findById(userContext.getId()).orElseThrow();
+			return user.getGroups().stream().map(g->{
+				GroupDTO dto = new GroupDTO();
+				dto.setId(g.getId());
+				dto.setName(g.getName());
+				dto.setDescription(g.getDescription());
+				return dto;
+			}).collect(Collectors.toList());
+		} catch(JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 }

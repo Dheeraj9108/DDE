@@ -63,7 +63,6 @@ export function Teams() {
 
   const handleSave=async()=>{
     const res = await apiService.updateRolesAndPermission(Object.values(updatedUsers),groupId!);
-    console.log(res);
   }
   
   return (

@@ -10,7 +10,7 @@ export function BreadcrumbComponent(props: any) {
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        {props.data.map((breadcrumb: any,index:number) => {
+        {props?.data?.map((breadcrumb: any,index:number) => {
           return (
             <>
               <BreadcrumbItem className="hidden md:block">

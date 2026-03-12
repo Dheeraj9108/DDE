@@ -52,4 +52,9 @@ public class GroupController {
 		groupService.updateRolesAndPermissions(users, groupId);
 		return ResponseEntity.ok("Update Success");
 	}
+	
+	@GetMapping
+	public ResponseEntity<List<GroupDTO>> getAllGroupsForUser(@RequestHeader("X-USER-INFO") String userContextObj){
+		return ResponseEntity.ok(groupService.getAllUserGroups(userContextObj));
+	}
 }

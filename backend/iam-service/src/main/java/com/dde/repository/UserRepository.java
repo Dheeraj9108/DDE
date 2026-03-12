@@ -10,4 +10,5 @@ import com.dde.model.User;
 public interface UserRepository extends JpaRepository<User, UUID> {
 	
 	Optional<User> findByUsername(String username);
+
 }

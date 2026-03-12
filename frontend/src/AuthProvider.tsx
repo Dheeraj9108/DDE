@@ -5,6 +5,7 @@ export type AuthContextType = {
     user: any,
     login: (user: any) => void
     logout: () => void;
+    setUserDetails: (user: any) => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -14,6 +15,7 @@ export default function AuthProvider({ children }: any) {
     const [user, setUser] = useState(null);
 
     const login = (user: any) => setUser(user);
+    const setUserDetails = (user:any)=>setUser(user);
     const logout = () => setUser(null);
 
     useEffect(() => {
@@ -24,15 +26,14 @@ export default function AuthProvider({ children }: any) {
         api.get('/iam/users/me')
         .then((res) => {
             setUser(res.data);
-            console.log(res);
         }).catch(()=>{
-            // localStorage.removeItem('token');
+            localStorage.removeItem('token');
         })
 
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, setUserDetails }}>
             {children}
         </AuthContext.Provider>
     )

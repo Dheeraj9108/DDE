@@ -18,4 +18,6 @@ public interface IGroupService {
 	List<UserDTO> getMembersByGroupId(UUID id);
 	
 	void updateRolesAndPermissions(List<UserDTO> users, UUID groupId);
+	
+	List<GroupDTO> getAllUserGroups(String userContextObj);
 }

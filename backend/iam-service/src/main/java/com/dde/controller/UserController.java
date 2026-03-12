@@ -38,9 +38,9 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(null);
 	}
 	
-	@GetMapping("/me")
-	public ResponseEntity<UserDTO> getUserProfile(@RequestHeader("X-USER-INFO") String userContextObj){
-		UserDTO user = userService.getUserProfile(userContextObj);
+	@GetMapping("/me/{groupId}")
+	public ResponseEntity<UserDTO> getUserProfile(@RequestHeader("X-USER-INFO") String userContextObj, @PathVariable("groupId") UUID groupId){
+		UserDTO user = userService.getUserProfile(userContextObj, groupId);
 		return ResponseEntity.ok(user);
 	}
 	

@@ -11,6 +11,8 @@ import com.dde.dto.UserContextDTO;
 import com.dde.dto.UserDTO;
 import com.dde.exception.UserNotFoundException;
 import com.dde.model.User;
+import com.dde.model.UserGroup;
+import com.dde.repository.UserGroupRepository;
 import com.dde.repository.UserRepository;
 import com.dde.service.IUserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements IUserService {
 
 	private final UserRepository userRepository;
+	
+	private final UserGroupRepository userGroupRepository;
 
 	@Override
 	public UserDTO getUserByUsername(String username) {
@@ -37,16 +41,20 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public UserDTO getUserProfile(String userContextObj) {
+	public UserDTO getUserProfile(String userContextObj, UUID groupId) {
 		UserDTO userDTO = new UserDTO();
 		try {
 			UserContextDTO userContext = new ObjectMapper().readValue(userContextObj, UserContextDTO.class);
 			User user = userRepository.findByUsername(userContext.getUsername())
 					.orElseThrow(() -> new UserNotFoundException(userContext.getUsername()));
+			UserGroup ug = userGroupRepository.findByUserIdAndGroupId(userContext.getId(), groupId);
+			
 			userDTO.setId(user.getId());
 			userDTO.setUsername(user.getUsername());
 			userDTO.setPassword(user.getPassword());
 			userDTO.setGroups(getGroups(user));
+			userDTO.setProjectOwner(ug.isProjectOwner());
+			userDTO.setRoles(ug.getRoles());
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}

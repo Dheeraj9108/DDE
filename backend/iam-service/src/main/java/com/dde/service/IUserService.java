@@ -9,7 +9,7 @@ public interface IUserService {
 	
 	UserDTO getUserByUsername(String username);
 	
-	UserDTO getUserProfile(String userContextObj);
+	UserDTO getUserProfile(String userContextObj, UUID groupId);
 	
 	void createUser(UserDTO user);
 	

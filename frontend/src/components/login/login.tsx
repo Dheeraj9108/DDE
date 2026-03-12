@@ -34,21 +34,21 @@ export function Login({ className, ...props }: React.ComponentProps<"div">) {
       username:username?.current?.value ?? '',
       password:password?.current?.value ?? ''
     }
-    // login({username:"Dheeraj"});
-    // navigate("/dashboard");
+  
     try {
       const res = await LoginApiService.login(payload);
       const token = res.data;
       localStorage.setItem("token",token);
       if(res.success){
-        const user = await LoginApiService.getUserDetails();
-        login(user);
-        if(user?.groups?.length == 0) {
-          navigate('/join');
-        } else {
-          const group = user.groups[0];
-          navigate(`/group/${group.id}/dashboard`);
-        }
+        // const user = await LoginApiService.getUserDetails();
+        // login(user);
+        navigate('/group');
+        // if(user?.groups?.length == 0) {
+        //   navigate('/join');
+        // } else {
+        //   const group = user.groups[0];
+        //   navigate(`/group/${group.id}/dashboard`);
+        // }
       }
     } catch (error:any) {
       setShowError(true);

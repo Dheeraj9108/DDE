@@ -31,7 +31,7 @@ export default function ManageCollaborators({ open, onOpenChange, project }: any
 
     const [collaborators, setCollaborators] = useState<ICollaborator[]>(project?.collaborators ?? []);
     const [allUsers, setAllUsers] = useState<IUser[]>([]);
-    const [collaboratorsSet, setCollaboratorsSet] = useState(new Set());
+    const [_, setCollaboratorsSet] = useState(new Set());
 
     useEffect(() => {
         if (!project) return;

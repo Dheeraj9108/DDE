@@ -84,11 +84,11 @@ export function Projects() {
     <>
       <Header breadcrumbs={breadcrumbItems} />
       <div className="container mx-auto max-w-7xl px-5 my-4">
-        <div className="text-2xl font-bold mb-1 ">Projects</div>
+        <div className="text-2xl font-bold mb-1">Projects</div>
         <DataTable
           columns={generateColumns(CONST.PROJECT_LIST_COLUMNS, actions)}
           data={projects}
-          showCreate={true}
+          showCreate={user?.roles?.includes("Admin")}
           filterKey="name"
           onCreate={createProject}
         />

@@ -10,4 +10,5 @@ import com.dde.model.UserGroup;
 public interface UserGroupRepository extends JpaRepository<UserGroup, UUID>{
 	List<UserGroup> findByUserIdInAndGroupId(List<UUID> userId, UUID groupId);
 	List<UserGroup> findByGroupId(UUID groupId);
+	UserGroup findByUserIdAndGroupId(UUID userId, UUID groupId);
 }

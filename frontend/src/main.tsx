@@ -18,6 +18,7 @@ import PublicRoute from "./PublicRoute.tsx";
 import AuthProvider from "./AuthProvider.tsx";
 import Home from "./components/home/home.tsx";
 import { Join } from "./components/join/join.tsx";
+import Group from "./components/group/group.tsx";
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
   {
     element: <ProtectedRoute />,
     children: [
+      {
+        path: "/group",
+        element: <Group/>,
+      },
       {
         path: "/group/:groupId/dashboard",
         element: <Dashboard />,

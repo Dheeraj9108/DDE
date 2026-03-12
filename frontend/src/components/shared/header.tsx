@@ -22,7 +22,7 @@ export function Header(props: any) {
         <div className='flex items-center gap-4'>
           <SidebarTrigger className='[&_svg]:!size-5' />
           <Separator orientation='vertical' className='hidden sm:block h-4 w-px bg-gray-600/25' />
-          <BreadcrumbComponent data={props.breadcrumbs} />
+          <BreadcrumbComponent data={props?.breadcrumbs} />
         </div>
         <div className='flex items-center gap-1.5'>
           
