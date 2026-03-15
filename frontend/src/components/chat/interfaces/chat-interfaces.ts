@@ -21,6 +21,7 @@ export interface ISummary {
   flowName: string;
   completedTime: string;
   coversations: IConversation[];
+  aiAnalysis:IAIAnalysis;
 }
 
 export interface IConversation {
@@ -32,4 +33,11 @@ export interface AIResponse {
   purpose:string;
   guidance:string;
   commonMistakes: string[]
+}
+
+export interface IAIAnalysis {
+  diagnosticReasoning:string;
+  observations:string[];
+  optionalChecks:string[];
+  relatedCauses:string[];
 }

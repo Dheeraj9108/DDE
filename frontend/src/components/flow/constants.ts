@@ -1,6 +1,7 @@
 import { GenericColumn } from "../shared/interfaces/interfaces";
 
 export const SAVE: string = "Save";
+export const ANALYZE: string = "Analyze";
 export const START_REVIEW: string = "Start Review";
 export const APPROVE: string = "Approve";
 export const REQUEST_CHANGE: string = "Request Change";

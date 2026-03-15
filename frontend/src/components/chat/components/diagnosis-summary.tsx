@@ -27,11 +27,37 @@ import {
 import { Bot, User } from "lucide-react";
 
 export function DiagnosisSummary() {
-  const [summary, setSummary] = useState<ISummary>();
+  const [summary, setSummary] = useState<ISummary>({} as ISummary);
   const { id, sessionId } = useParams();
   useEffect(() => {
     if (sessionId) generateSummary(sessionId);
   }, [id, sessionId]);
+
+  useEffect(() => {
+    setSummary((prev:ISummary)=>{
+      return {
+        ...prev,
+        aiAnalysis: {
+          "diagnosticReasoning": "The engine cranks, confirming the starting system is operational, but it fails to start due to a lack of sufficient fuel pressure. The measured pressure of 10 PSI is significantly below the required threshold for combustion. This lack of pressure identifies the fuel pump as the failed component responsible for the no-start condition.",
+          "observations": [
+              "The engine cranks normally, indicating the battery, starter, and starting circuit are functional.",
+              "Fuel pressure is measured at 10 PSI, which is confirmed to be below the manufacturer's specification."
+          ],
+          "optionalChecks": [
+              "Verify voltage and ground supply at the fuel pump connector during cranking.",
+              "Inspect the fuel filter for potential blockage.",
+              "Perform a fuel volume delivery test to confirm flow rate."
+          ],
+          "relatedCauses": [
+              "Clogged fuel filter",
+              "Faulty fuel pressure regulator",
+              "Restricted fuel lines",
+              "Electrical resistance in the fuel pump circuit"
+          ]
+        }
+      }
+    }) 
+  },[]);
 
   const generateSummary = async (sessionId: string) => {
     const res = await CRUDService.generateSummary(sessionId);
@@ -311,20 +337,6 @@ export function DiagnosisSummary() {
                 </div>
               </div>
 
-              {/* AI Suggestions */}
-              <div
-                className="bg-card rounded-lg p-6 border-l-4 border-blue-500"
-                style={{ background: "#161f30" }}
-              >
-                <div className="flex  text-blue-300">
-                  <LuLightbulb /> <Label>AI Suggestion</Label>
-                </div>
-                <div className="pt-3 text-xs text-blue-100/50 font-medium">
-                  Based on the memory pattern we recommend checking the
-                  /api/v1/stream end point for unclosed socket connections.
-                </div>
-              </div>
-
               {/* Quick Actions */}
               <div
                 className="bg-card rounded-lg p-6"
@@ -340,7 +352,44 @@ export function DiagnosisSummary() {
                     Report an Issue
                   </Button>
                 </div>
+              </div> 
+
+              {/* AI Suggestions */}
+              <div
+                className="bg-card rounded-lg p-6 border-l-4 border-blue-500"
+                style={{ background: "#161f30" }}
+              >
+                <div className="flex text-blue-300">
+                  <LuLightbulb /> <Label>AI Insights</Label>
+                </div>
+                <div className="pt-3 text-xs text-blue-100/50 font-medium">
+                    <strong>Observations : </strong>
+                    <ul className="list-disc list-inside">
+                      {summary?.aiAnalysis?.observations?.map((m, i) => (
+                        <li key={i}>{m}</li>
+                      ))}
+                    </ul>
+                    <br/>
+                    <strong>Optional Checks : </strong>
+                    <ul className="list-disc list-inside">
+                      {summary?.aiAnalysis?.optionalChecks?.map((m, i) => (
+                        <li key={i}>{m}</li>
+                      ))}
+                    </ul>
+                    <br/>
+                    <strong>Related Causes : </strong>
+                    <ul className="list-disc list-inside">
+                      {summary?.aiAnalysis?.relatedCauses?.map((m, i) => (
+                        <li key={i}>{m}</li>
+                      ))}
+                    </ul>
+                    <br/>
+                    <strong>Diagnostic Reasoning : </strong>
+                    {summary?.aiAnalysis?.diagnosticReasoning}
+                </div>
               </div>
+
+
             </div>
           </div>
         </div>

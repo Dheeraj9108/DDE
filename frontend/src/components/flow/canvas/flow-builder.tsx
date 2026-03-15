@@ -30,6 +30,8 @@ import * as CONST from "../constants";
 import { PayLoadBuilder } from "../builder/payload-builder";
 import { IFlow, IFlowPayLoad, IOption } from "../interfaces/flow-interface";
 import { Header } from "@/components/shared/header";
+import { IconSparkles } from "@tabler/icons-react";
+import { AIAnalysisReport } from "./ai-analysis-report";
 
 const nodeTypes: NodeTypes = {
   startNode: StartNode,
@@ -90,11 +92,14 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
 };
 
 export function FlowBuilder() {
+
   const [flow, setFlow] = useState<any>();
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const nodeIdRef = useRef(3);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [showAIAnalysisSheet,setShowAIAnalysisSheet] = useState<boolean>();
+  const [aiAnalysisReport, setAIAnalysisReport] = useState<any>();
+  const nodeIdRef = useRef(3);
   const searchRef = useRef(null);
   const { id } = useParams();
   const builderRef = useRef<PayLoadBuilder>(null);
@@ -571,6 +576,13 @@ export function FlowBuilder() {
   };
   setBreadcrumb();
 
+  const generateAIAnalysisReport = async() => {
+    const response = await apiService.generateAIAnalysisReport(id!);
+    console.log(response);
+    setAIAnalysisReport(response);
+    setShowAIAnalysisSheet(true);
+  }
+
   return (
     <>
       <div className="w-full h-full bg-[#272429]/60 relative">
@@ -590,37 +602,13 @@ export function FlowBuilder() {
           <Controls className="bg-gray-800 border-gray-700" />
           <Background color="#272429" gap={20} />
           <Header breadcrumbs={breadcrumbItems} />
-
           <Panel position="top-left" className="flex items-center gap-2 mt-4 absolute !top-12">
-            {/* <div
-              ref={searchRef}
-              className="flex items-center bg-gray-800 rounded-md border border-gray-700 p-1"
-            >
-              {isSearchOpen ? (
-                <div className="flex items-center gap-1 animate-in fade-in slide-in-from-right-2 duration-200">
-                  <NodeSearch className="w-64 bg-transparent border-none focus-visible:ring-0" />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsSearchOpen(false)}
-                    className="h-8 w-8 text-gray-400"
-                  >
-                    <X size={16} />
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsSearchOpen(true)}
-                  className="h-8 w-8 text-gray-400 hover:text-white"
-                >
-                  <Search size={18} />
-                </Button>
-              )}
-            </div> */}
-
-            {flow?.status === "Draft" && <Button onClick={saveFlow}>{CONST.SAVE}</Button>}
+            <Button size="sm" className="text-xs cursor-pointer hover:bg-sidebar-accent" onClick={()=> generateAIAnalysisReport()}>
+              <span className="text-xs inline-flex gap-1 hover:text-primary cursor-pointer">
+                  <IconSparkles size={17}/> {CONST.ANALYZE}
+              </span>
+            </Button>
+            {flow?.status === "Draft" && <Button size="sm" className="text-xs cursor-pointer hover:bg-sidebar-accent" onClick={saveFlow}>{CONST.SAVE}</Button>}
             {flow?.status === "Submitted" && <Button onClick={startReview}>{CONST.START_REVIEW}</Button>}
             {flow?.status === "Under Review" &&
               <>
@@ -630,6 +618,7 @@ export function FlowBuilder() {
             }
           </Panel>
         </ReactFlow>
+        <AIAnalysisReport open={showAIAnalysisSheet} onOpenChange={()=>setShowAIAnalysisSheet(false)} report={aiAnalysisReport}/>
       </div>
     </>
   );

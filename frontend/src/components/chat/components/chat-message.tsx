@@ -30,7 +30,6 @@ export function ChatMessage({ message, onOptionSelect, getAIExplaination }: Chat
 
     return (
       <>
-      
         <p><strong>Purpose : </strong>{content.purpose}</p>
         <br/>
         <p><strong>Guidance : </strong>{content.guidance}</p>
