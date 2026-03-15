@@ -52,8 +52,8 @@ export function Projects() {
     fetchProjects();
   };
 
-  const handleDelete = async (id: string) => {
-    await apiService.deleteProject(id);
+  const handleDelete = async (row: IProjectListItem) => {
+    await apiService.deleteProject(row.id);
     toast.success(CONST.DELETE_SUCCESS);
     fetchProjects();
   };

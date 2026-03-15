@@ -1,3 +1,5 @@
+import api from "@/components/util/api";
+
 const BASE_URL1: string = "http://localhost:8085/flows";
 const BASE_URL: string = "http://localhost:8084/diag";
 
@@ -42,4 +44,10 @@ export const CRUDService = {
     });
     return await res.json();
   },
+
+  generateAIExplaination:async()=>{
+    const res = await api.get('http://localhost:8086/ai/explain');
+    return res.data;
+  }
+
 };

@@ -3,24 +3,47 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { User, Bot } from "lucide-react"
-// import { format } from "date-fns"
+import { IconSparkles } from "@tabler/icons-react"
+import { AIResponse, Message } from "../interfaces/chat-interfaces"
 
-interface Message {
-  id: string
-  type: "user" | "system"
-  content: string
-  timestamp: Date
-  options?: string[]
-  inputType?: "NUMBER" | "select" | "boolean"
-}
+// interface Message {
+//   id: string
+//   type: "user" | "system"
+//   content: string
+//   timestamp: Date
+//   options?: string[]
+//   inputType?: "NUMBER" | "select" | "boolean"
+// }
 
 interface ChatMessageProps {
   message: Message
   onOptionSelect: (message:Message,option: string, isOption: boolean) => void
+  getAIExplaination: (message:Message) => void
 }
 
-export function ChatMessage({ message, onOptionSelect }: ChatMessageProps) {
-  const isUser = message.type === "user"
+export function ChatMessage({ message, onOptionSelect, getAIExplaination }: ChatMessageProps) {
+  const isUser = message.type === "user";
+
+
+  const renderContent=(content: string | AIResponse)=> {
+    if (typeof content === "string") return content;
+
+    return (
+      <>
+      
+        <p><strong>Purpose : </strong>{content.purpose}</p>
+        <br/>
+        <p><strong>Guidance : </strong>{content.guidance}</p>
+        <br/>
+        <strong>Common Mistakes : </strong>
+        <ul className="list-disc list-inside">
+          {content?.commonMistakes?.map((m, i) => (
+            <li key={i}>{m}</li>
+          ))}
+        </ul>
+      </>
+    );
+  }
 
   return (
     <div className={`flex items-start space-x-3 ${isUser ? "flex-row-reverse space-x-reverse" : ""}`}>
@@ -41,7 +64,7 @@ export function ChatMessage({ message, onOptionSelect }: ChatMessageProps) {
       <div className={`flex-1 max-w-xs sm:max-w-md ${isUser ? "flex justify-end" : ""}`}>
         <Card className={`${isUser ? "bg-primary text-primary-foreground" : "bg-card"} py-3 rounded-lg`}>
           <CardContent className="px-3">
-            <p className="text-sm leading-relaxed">{message.content}</p>
+            {renderContent(message?.content)}
 
             {!isUser && message.options && (
               <div className="mt-3 space-y-2">
@@ -63,9 +86,15 @@ export function ChatMessage({ message, onOptionSelect }: ChatMessageProps) {
 
         {/* Timestamp */}
         <div className={`mt-1 text-xs text-muted-foreground ${isUser ? "text-right" : "text-left"}`}>
+          {
+            !message.isAiResponse &&
+            <span className="text-xs inline-flex gap-1 hover:text-primary cursor-pointer" onClick={() => getAIExplaination(message)}>
+              <IconSparkles size={17} />Exlain
+            </span>
+          }
           {/* {format(message.timestamp, "HH:mm")}   */}
         </div>
-      </div>
+      </div> 
     </div>
   )
 }

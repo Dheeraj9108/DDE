@@ -1,13 +1,14 @@
 export interface Message {
   id: string;
   type: "user" | "system";
-  content: string;
+  content: string | AIResponse;
   timestamp: Date;
   options?: string[];
   inputType?: "NUMBER" | "select" | "boolean";
   sessionId?: string;
   flowId?: string;
   nodeId?: string;
+  isAiResponse?:boolean;
 }
 
 export interface ISummary {
@@ -25,4 +26,10 @@ export interface ISummary {
 export interface IConversation {
   prompt:string;
   answer:string;
+}
+
+export interface AIResponse {
+  purpose:string;
+  guidance:string;
+  commonMistakes: string[]
 }

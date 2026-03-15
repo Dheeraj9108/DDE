@@ -57,9 +57,9 @@ export function ChatInterface({ flowId, firstQuestion }: ChatInterfaceProps) {
     };
 
     const payload = {
-      sessionId: message.sessionId,
-      nodeId: message.nodeId,
-      prompt: message.content,
+      sessionId: message?.sessionId,
+      nodeId: message?.nodeId,
+      prompt: message?.content,
       answer: content,
     };
 
@@ -98,6 +98,27 @@ export function ChatInterface({ flowId, firstQuestion }: ChatInterfaceProps) {
     }
   };
 
+  const getAIExplaination=async(message:Message)=>{
+    // const res = await CRUDService.generateAIExplaination();
+    const res = {
+    "commonMistakes": [
+        "Not checking if all individual propellers are spinning",
+        "Mistaking a brief motor 'twitch' for active spinning",
+        "Testing without sufficient battery power to engage motors"
+    ],
+    "guidance": "Initiate the arming sequence or takeoff command and visually verify if all propellers are rotating continuously.",
+    "purpose": "To determine if the issue is electrical/software (motors not starting) or mechanical/aerodynamic (motors spin but no lift)."
+    };
+    const responseMessage:Message = {
+      type: "system",
+      content: res,
+      id: "",
+      isAiResponse:true,
+      timestamp: new Date()
+    }
+    setMessages((prev)=>[...prev, responseMessage])
+  }
+
   const lastMessage = messages[messages.length - 1];
   const showInput = lastMessage?.type === "system" && lastMessage?.inputType === "NUMBER";
 
@@ -109,6 +130,7 @@ export function ChatInterface({ flowId, firstQuestion }: ChatInterfaceProps) {
             key={message.id}
             message={message}
             onOptionSelect={handleSendMessage}
+            getAIExplaination={getAIExplaination}
           />
         ))}
 
@@ -149,58 +171,3 @@ export function ChatInterface({ flowId, firstQuestion }: ChatInterfaceProps) {
     </div>
   );
 }
-
-// {
-//   id: "2",
-//   type: "system",
-//   content: "Are you currently experiencing any chest pain or discomfort?",
-//   timestamp: new Date(),
-//   inputType: "boolean",
-//   options: ["Yes", "No"],
-// },
-
-//  const generateSystemResponse = (
-//     userInput: string,
-//     isOption: boolean,
-//   ): Message => {
-//     const responses = [
-//       {
-//         content:
-//           "Thank you for that information. Can you describe the intensity of the pain on a scale of 1-10?",
-//         inputType: "text" as const,
-//       },
-//       {
-//         content: "How long have you been experiencing these symptoms?",
-//         inputType: "select" as const,
-//         options: [
-//           "Less than 1 hour",
-//           "1-6 hours",
-//           "6-24 hours",
-//           "More than 24 hours",
-//         ],
-//       },
-//       {
-//         content:
-//           "Do you have any history of heart disease or high blood pressure?",
-//         inputType: "boolean" as const,
-//         options: ["Yes", "No"],
-//       },
-//       {
-//         content:
-//           "Based on your responses, I recommend seeking immediate medical attention. Please contact your healthcare provider or visit the nearest emergency room.",
-//         inputType: undefined,
-//       },
-//     ];
-
-//     const randomResponse =
-//       responses[Math.floor(Math.random() * responses.length)];
-
-//     return {
-//       id: Date.now().toString(),
-//       type: "system",
-//       content: randomResponse.content,
-//       timestamp: new Date(),
-//       inputType: randomResponse.inputType,
-//       options: randomResponse.options,
-//     };
-//   };

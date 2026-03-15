@@ -6,15 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Send } from "lucide-react";
+import { Message } from "../interfaces/chat-interfaces";
 
-interface Message {
-  id: string;
-  type: "user" | "system";
-  content: string;
-  timestamp: Date;
-  options?: string[];
-  inputType?: "NUMBER" | "select" | "boolean";
-}
+// interface Message {
+//   id: string;
+//   type: "user" | "system";
+//   content: string;
+//   timestamp: Date;
+//   options?: string[];
+//   inputType?: "NUMBER" | "select" | "boolean";
+// }
 
 interface ChatInputProps {
   message: Message;
